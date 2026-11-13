@@ -904,7 +904,7 @@ function avalVals() {
   const fracao = (x) => (x ? `${x.passou}/${x.total}` : '—')
   return {
     situacao: a.disponivel ? `experimento ${a.experimento || ''}` : 'aguardando o experimento',
-    correcao: fracao(m.correcao_semantica), trajetoria: fracao(m.trajetoria), verificacao: fracao(m.afirmacoes_confirmadas),
+    correcao: fracao(m.correcao_semantica), trajetoria: fracao(m.trajetoria), verificacao: m.afirmacoes_confirmadas?.passou ?? '—',
     temUrl: !!a.url, url: a.url || '#',
     nota: a.disponivel ? `${a.casos} casos de teste · ${a.data || ''}` : 'Rode scripts.evaluate --langsmith para publicar o experimento.',
   }

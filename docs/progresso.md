@@ -41,7 +41,7 @@ Mapeamento dos 29 itens da [rubrica oficial do Infnet](https://lms.infnet.edu.br
 | 5.2 | API, SQL, câmbio e RAG no mesmo integrador | 06 · integracao e código | Evidenciado | — |
 | 5.3 | create_openai_tools_agent + AgentExecutor | 06 · integracao | Evidenciado | Executor real, modelo roteirizado |
 | 5.4 | Histórico por session_id | 06 · integracao; 04 · turnos | Evidenciado | — |
-| 5.5 | Interface Streamlit | 06 · integracao comprova HTTP/HTML | Alternativa | A rubrica nomeia Streamlit; a UI de entrega provisória é HTML. A CLI é prevista no enunciado para o vídeo. |
-| 5.6 | Avaliação publicada no LangSmith | 06 · avaliacao e [regressão local](../output/avaliacao-local.json) | Bloqueado | Faltam credenciais OpenAI e LangSmith neste workspace |
+| 5.5 | Interface Streamlit | 06 · integracao comprova HTTP/HTML | Alternativa | A rubrica nomeia Streamlit; a interface final é Vue servida pelo FastAPI, feita a partir do protótipo do Claude Design. A CLI é prevista no enunciado para o vídeo. |
+| 5.6 | Avaliação publicada no LangSmith | 06 · avaliacao, [regressão local](../output/avaliacao-local.json) e [experimento de 13/11](../output/langsmith.txt): 12/12 correção, 12/12 trajetória | Evidenciado | Métricas também na interface (`GET /avaliacao`) |
 
 Os estados de acompanhamento são **A fazer**, **Em andamento**, **Bloqueado** e **Evidenciado**. A marca **Alternativa** identifica um desvio intencional da tecnologia pedida pela rubrica. Não somar o 5.5 nem o 5.6 como comprovados no formato nominal.

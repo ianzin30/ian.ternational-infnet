@@ -1,0 +1,24 @@
+{
+  "experimento": "radar-integrador-b0137351",
+  "url": "https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/projects/p/c5603a58-dd3c-4219-ac94-bfd4bcff73c8",
+  "data": "13/11/2026",
+  "casos": 12,
+  "metricas": {
+    "correcao_semantica": {
+      "passou": 12,
+      "total": 12
+    },
+    "regressao_deterministica": {
+      "passou": 12,
+      "total": 12
+    },
+    "trajetoria": {
+      "passou": 12,
+      "total": 12
+    },
+    "afirmacoes_confirmadas": {
+      "passou": "75%",
+      "total": "8 casos"
+    }
+  }
+}

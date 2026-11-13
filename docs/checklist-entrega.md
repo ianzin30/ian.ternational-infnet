@@ -16,7 +16,7 @@ Situação em 12/11/2026: o agente roda no modo real (gpt-6-luna, `text-embeddin
   - a resposta do SQL inclui a empresa;
   - o resumo do RAG traz as consultas e o top 2;
   - o juiz recebe a trilha de ferramentas e sabe que o campo `vagas` só existe em buscas.
-- [ ] **2.2 Endpoints da interface do Claude Design** (deixado para depois, quando o front estiver pronto): `/chat/stream` (SSE com as etapas de `_turn`), `GET`/`POST /curriculo`, `/curriculo/info`, `/curriculo/reset`, `/modelos` e `/modelo`, conforme o contrato do prompt. Depois, salvar o HTML exportado em `web/index.html`.
+- [x] **2.2 Endpoints da interface do Claude Design** (feito em 13/11/2026, com a interface em Vue servida de `web/dist`; ver [mapa da rubrica](ui-rubrica.md)): `/chat/stream` (SSE com as etapas de `_turn`), `GET`/`POST /curriculo`, `/curriculo/info`, `/curriculo/reset`, `/modelos` e `/modelo`, conforme o contrato do prompt. Depois, salvar o HTML exportado em `web/index.html`.
 - [x] **2.3 Reexecutar os notebooks com o modelo real.** Os notebooks 01 a 06 rodaram sem erro com `NOTEBOOK_OPENAI=1`, `NOTEBOOK_LIVE_APIS=1` e `NOTEBOOK_LANGSMITH=1`. Ficaram nas células:
   - o perfil extraído pelo gpt-6-luna (02);
   - o ReAct e a function calling com tokens reais (03);
