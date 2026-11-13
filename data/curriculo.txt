@@ -1,0 +1,5 @@
+Currículo fictício — Alex Silva
+Senior Backend Engineer / Desenvolvedor backend sênior
+Skills: Python, FastAPI, PostgreSQL, Docker
+Inglês: B2
+Cargo alvo: Senior Backend Engineer

@@ -1,0 +1,11 @@
+.venv/
+.env
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+data/runtime/
+data/curriculos/
+output/*.zip
+node_modules/
+.DS_Store
+web/.vite/

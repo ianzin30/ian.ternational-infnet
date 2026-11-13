@@ -1,0 +1,7 @@
+[
+ {"id":"demo-aurora","title":"Senior Python Backend Engineer","company":"Aurora Labs","source":"Dados fictícios","url":"https://example.com/jobs/aurora","description":"Worldwide remote, including Brazil. Senior Python, FastAPI and PostgreSQL. B2 English required. Working hours UTC-3. Salary: USD 6,500 per month."},
+ {"id":"demo-orbit","title":"Python Platform Engineer","company":"Orbit Works","source":"Dados fictícios","url":"https://example.com/jobs/orbit","description":"Remote in LATAM, including Brazil. Python and Docker. B2 English required. Working hours UTC-3. Salary: EUR 5,400 per month."},
+ {"id":"demo-harbor","title":"Python API Engineer","company":"Harbor Tech","source":"Dados fictícios","url":"https://example.com/jobs/harbor","description":"Remote in Brazil. Python and Redis. English required at C1. Working hours UTC+1. Salary is not disclosed."},
+ {"id":"demo-atlas","title":"Senior Python Developer","company":"Atlas Systems","source":"Dados fictícios","url":"https://example.com/jobs/atlas","description":"Remote, US only. Python, FastAPI, PostgreSQL and Docker. Salary: USD 9,000 per month."},
+ {"id":"demo-moon","title":"Python Software Engineer","company":"Moon Studio","source":"Dados fictícios","url":"https://example.com/jobs/moon","description":"Remote position. Python and Django. Salary: USD 8,000. No further details are provided."}
+]
