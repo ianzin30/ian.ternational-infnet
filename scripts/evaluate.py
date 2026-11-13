@@ -99,6 +99,23 @@ def local_report():
     return {k: v for k, v in report.items() if k != "results"}
 
 
+def resumo_experimento(experiment, nome, url):
+    """Métricas agregadas que a interface mostra no bloco "Avaliação no LangSmith"."""
+    from datetime import date
+
+    scores = {}
+    for row in experiment:
+        for result in row["evaluation_results"]["results"]:
+            if result.score is not None:
+                scores.setdefault(result.key, []).append(float(result.score))
+    binarias = {"correcao_semantica", "regressao_deterministica", "trajetoria"}
+    metricas = {key: ({"passou": int(sum(values)), "total": len(values)} if key in binarias else
+                      {"passou": f"{round(100 * sum(values) / len(values))}%", "total": f"{len(values)} casos"})
+                for key, values in scores.items()}
+    return {"experimento": nome, "url": url, "data": date.today().strftime("%d/%m/%Y"),
+            "casos": len(cases()), "metricas": metricas}
+
+
 def upload_experiment(*, share=False):
     if not os.getenv("LANGSMITH_API_KEY"):
         raise SystemExit("Configure LANGSMITH_API_KEY antes de executar --langsmith.")
@@ -133,6 +150,8 @@ def upload_experiment(*, share=False):
         links += f"Dataset compartilhado: {client.share_dataset(dataset.id)['url']}\n"
     (ROOT / "output").mkdir(exist_ok=True)
     (ROOT / "output" / "langsmith.txt").write_text(links)
+    (ROOT / "output" / "langsmith.json").write_text(json.dumps(
+        resumo_experimento(experiment, project.name, project.url), ensure_ascii=False, indent=2) + "\n")
     print(links)
     return experiment
 
