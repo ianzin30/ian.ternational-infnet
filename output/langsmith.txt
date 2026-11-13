@@ -1,0 +1,4 @@
+Experimento: radar-integrador-0b94dc53
+URL do experimento: https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/projects/p/5688720d-d3a7-426b-8f38-82d5034202ee
+Dataset: 96eed1b9-7c17-4bc7-8f03-dffe2d66807b
+Execução: https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/projects/p/5688720d-d3a7-426b-8f38-82d5034202ee/r/01a1d2a9-712e-7d23-a7a9-04c909cc0905?poll=true

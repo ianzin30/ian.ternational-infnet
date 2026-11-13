@@ -1,0 +1,72 @@
+{
+  "modelo": "roteirizado",
+  "http_real": true,
+  "observacao": [
+    {
+      "vagas": [
+        {
+          "titulo": "Senior React Full-stack Developer",
+          "fonte": "Remotive",
+          "url": "https://remotive.com/remote-jobs/software-development/senior-react-full-stack-developer-2091136"
+        },
+        {
+          "titulo": "Senior Back-end Developer",
+          "fonte": "Remotive",
+          "url": "https://remotive.com/remote-jobs/software-development/senior-back-end-developer-2091135"
+        },
+        {
+          "titulo": "Software Engineer, AI Coding Tasks",
+          "fonte": "Remotive",
+          "url": "https://remotive.com/remote-jobs/software-development/software-engineer-ai-coding-tasks-2091158"
+        }
+      ],
+      "fontes": [
+        {
+          "name": "buscar_vagas",
+          "status": "ok",
+          "detail": "3 vaga(s) correspondem à busca.",
+          "duration_ms": 209,
+          "source": "Remotive"
+        },
+        {
+          "name": "buscar_vagas",
+          "status": "ok",
+          "detail": "0 vaga(s) correspondem à busca.",
+          "duration_ms": 449,
+          "source": "Arbeitnow"
+        }
+      ],
+      "USD": {
+        "taxa": "5.635",
+        "data": "2026-11-12",
+        "fonte": "AwesomeAPI"
+      },
+      "EUR": {
+        "taxa": "6.2355",
+        "data": "2026-11-12",
+        "fonte": "AwesomeAPI"
+      }
+    }
+  ],
+  "callbacks": [
+    {
+      "evento": "modelo",
+      "tokens": null
+    },
+    {
+      "evento": "action",
+      "tool": "consultar_apis",
+      "input": "{'stack': 'Python'}"
+    },
+    {
+      "evento": "observation",
+      "tool": "consultar_apis",
+      "duration_ms": 858,
+      "output": "{'vagas': [{'titulo': 'Senior React Full-stack Developer', 'fonte': 'Remotive', 'url': 'https://remotive.com/remote-jobs/software-development/senior-react-full-stack-developer-2091136'}, {'titulo': 'Senior Back-end Developer', 'fonte': 'Remotive', 'u"
+    },
+    {
+      "evento": "modelo",
+      "tokens": null
+    }
+  ]
+}
