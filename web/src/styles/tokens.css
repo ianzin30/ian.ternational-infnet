@@ -1,0 +1,83 @@
+/* =====================================================================
+   IAN.TERNATIONAL · TOKENS (Lotes 1 e 2)
+   Layout: cabeçalho fino, conversa numa coluna de leitura de 760 px e
+   uma coluna lateral de 400 px (gaveta abaixo de 960 px).
+   1 Primitivos (--p-*): valores crus. Cinzas com leve viés para o
+     azul-petróleo do acento. Escala modular 1,125 sobre 16 px. Espaço
+     em grade de 4 px. Raios 4/6/10/999. Duas sombras. 120/200/320 ms.
+   2 Semânticos (--color-*, --text-*, --space-*, --radius-*, --dur-*):
+     papéis. Só esta camada muda com o tema e com reduced-motion.
+   3 Componente (--btn-*, --card-*, --chip-*, --input-*, --header-*,
+     --sidebar-*, --toast-*, e no Lote 2 --tl-* linha do tempo,
+     --panel-* painel "Por que este resultado?", --code-* trechos mono,
+     e no Lote 3 --cv-* card do currículo, --reader-* leitor de PDF,
+     --menu-* seletor de modelo, --sk-* skeletons do carregamento,
+     e no Lote 4 --brand-* logo "Domínio" em mono com cursor).
+   Tema: .rr = claro; data-tema="escuro" força o escuro; data-tema=
+   "sistema" segue prefers-color-scheme.
+   Estados de etapa (cor + ícone + texto): na fila, executando, concluída,
+   erro, incerta, do cache, simulada, não usada.
+   ===================================================================== */
+body{margin:0}
+a{color:#0b6a85}a:hover{color:#08566c}
+.rr{
+  --p-white:#ffffff;--p-gray-25:#fbfcfc;--p-gray-50:#f4f6f7;--p-gray-100:#e9edef;--p-gray-200:#dce2e5;--p-gray-300:#c3cbd0;--p-gray-400:#848f97;--p-gray-500:#5a666e;--p-gray-700:#36434b;--p-gray-900:#0f171c;
+  --p-ink-950:#0b0f12;--p-ink-900:#11161a;--p-ink-850:#161c21;--p-ink-800:#1e262c;--p-ink-700:#2b353d;--p-ink-600:#5f6c76;--p-ink-400:#98a5ae;--p-ink-100:#e6ebee;
+  --p-petrol-50:#e8f3f6;--p-petrol-600:#0b6a85;--p-petrol-700:#08566c;--p-petrol-300:#5cc3dc;--p-petrol-200:#8ad6e8;--p-petrol-900:#0e2a33;--p-petrol-975:#04171d;
+  --p-green-700:#1b7a3e;--p-green-50:#e7f5ec;--p-green-300:#5fd38e;--p-green-900:#0f2a1b;
+  --p-amber-800:#845400;--p-amber-50:#fdf3dc;--p-amber-300:#f2c35a;--p-amber-900:#2d220c;
+  --p-red-700:#b3261e;--p-red-50:#fcebe9;--p-red-300:#f58b80;--p-red-900:#351512;
+  --p-font-sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --p-font-mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --p-size--2:.79rem;--p-size--1:.889rem;--p-size-0:1rem;--p-size-1:1.125rem;--p-size-3:1.424rem;--p-size-5:1.802rem;
+  --p-space-1:4px;--p-space-2:8px;--p-space-3:12px;--p-space-4:16px;--p-space-5:20px;--p-space-6:24px;--p-space-8:32px;--p-space-10:40px;
+  --p-radius-1:4px;--p-radius-2:6px;--p-radius-3:10px;--p-radius-pill:999px;
+  --p-shadow-1:0 1px 2px rgb(15 23 28 / .06);--p-shadow-2:0 8px 24px rgb(15 23 28 / .12),0 1px 2px rgb(15 23 28 / .08);
+  --p-dur-1:120ms;--p-dur-2:200ms;--p-dur-3:320ms;
+
+  --color-bg:var(--p-gray-25);--color-surface:var(--p-white);--color-sunken:var(--p-gray-50);
+  --color-text:var(--p-gray-900);--color-text-muted:var(--p-gray-500);--color-text-soft:var(--p-gray-700);
+  --color-border:var(--p-gray-100);--color-border-strong:var(--p-gray-200);--color-border-control:var(--p-gray-400);
+  --color-accent:var(--p-petrol-600);--color-accent-hover:var(--p-petrol-700);--color-on-accent:var(--p-white);--color-accent-subtle:var(--p-petrol-50);--color-focus:var(--p-petrol-600);
+  --color-success:var(--p-green-700);--color-success-bg:var(--p-green-50);
+  --color-warning:var(--p-amber-800);--color-warning-bg:var(--p-amber-50);
+  --color-danger:var(--p-red-700);--color-danger-bg:var(--p-red-50);
+  --color-scrim:rgb(15 23 28 / .32);--color-inverse-bg:var(--p-gray-900);--color-inverse-text:var(--p-ink-100);
+  --font-sans:var(--p-font-sans);--font-mono:var(--p-font-mono);
+  --text-xs:var(--p-size--2);--text-sm:var(--p-size--1);--text-md:var(--p-size-0);--text-lg:var(--p-size-1);--text-xl:var(--p-size-3);--text-2xl:var(--p-size-5);
+  --leading-tight:1.25;--leading-body:1.55;
+  --space-1:var(--p-space-1);--space-2:var(--p-space-2);--space-3:var(--p-space-3);--space-4:var(--p-space-4);--space-5:var(--p-space-5);--space-6:var(--p-space-6);--space-8:var(--p-space-8);--space-10:var(--p-space-10);
+  --gutter:var(--p-space-4);
+  --radius-sm:var(--p-radius-1);--radius-md:var(--p-radius-2);--radius-lg:var(--p-radius-3);--radius-pill:var(--p-radius-pill);
+  --shadow-raised:var(--p-shadow-1);--shadow-overlay:var(--p-shadow-2);
+  --dur-fast:var(--p-dur-1);--dur-base:var(--p-dur-2);--dur-slow:var(--p-dur-3);--ease-out:cubic-bezier(.2,.8,.2,1);
+
+  --header-h:56px;--header-bg:var(--color-bg);--sidebar-w:400px;--sidebar-bg:var(--color-sunken);--thread-max:760px;
+  --btn-h:40px;--btn-radius:var(--radius-md);--btn-primary-bg:var(--color-accent);--btn-primary-bg-hover:var(--color-accent-hover);--btn-primary-fg:var(--color-on-accent);--btn-secondary-border:var(--color-border-control);--btn-ghost-bg-hover:var(--color-sunken);
+  --card-bg:var(--color-surface);--card-border:var(--color-border-strong);--card-radius:var(--radius-lg);--card-pad:var(--space-5);
+  --chip-bg:var(--color-sunken);--chip-fg:var(--color-text-soft);--chip-radius:var(--radius-sm);
+  --input-bg:var(--color-surface);--input-border:var(--color-border-control);--input-radius:var(--radius-lg);
+  --bubble-user-bg:var(--color-sunken);--toast-bg:var(--color-inverse-bg);--toast-fg:var(--color-inverse-text);
+  --tl-mark:16px;--tl-rail:var(--color-border-strong);--tl-indent:var(--space-5);--tl-now-bg:var(--color-accent-subtle);--tl-hover-bg:var(--color-border);
+  --panel-w:640px;--panel-bg:var(--color-bg);--panel-pad:var(--space-6);
+  --code-bg:var(--color-sunken);--code-fg:var(--color-text);
+  --focus-ring:0 0 0 2px var(--color-bg),0 0 0 4px var(--color-focus);
+}
+.rr[data-tema="escuro"]{
+  --color-bg:var(--p-ink-950);--color-surface:var(--p-ink-850);--color-sunken:var(--p-ink-900);
+  --color-text:var(--p-ink-100);--color-text-muted:var(--p-ink-400);--color-text-soft:var(--p-ink-100);
+  --color-border:var(--p-ink-800);--color-border-strong:var(--p-ink-800);--color-border-control:var(--p-ink-600);
+  --color-accent:var(--p-petrol-300);--color-accent-hover:var(--p-petrol-200);--color-on-accent:var(--p-petrol-975);--color-accent-subtle:var(--p-petrol-900);--color-focus:var(--p-petrol-300);
+  --color-success:var(--p-green-300);--color-success-bg:var(--p-green-900);--color-warning:var(--p-amber-300);--color-warning-bg:var(--p-amber-900);--color-danger:var(--p-red-300);--color-danger-bg:var(--p-red-900);
+  --color-scrim:rgb(0 0 0 / .56);--color-inverse-bg:var(--p-ink-100);--color-inverse-text:var(--p-gray-900);--shadow-raised:none;--code-bg:var(--p-ink-950);color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){.rr[data-tema="sistema"]{
+  --color-bg:var(--p-ink-950);--color-surface:var(--p-ink-850);--color-sunken:var(--p-ink-900);
+  --color-text:var(--p-ink-100);--color-text-muted:var(--p-ink-400);--color-text-soft:var(--p-ink-100);
+  --color-border:var(--p-ink-800);--color-border-strong:var(--p-ink-800);--color-border-control:var(--p-ink-600);
+  --color-accent:var(--p-petrol-300);--color-accent-hover:var(--p-petrol-200);--color-on-accent:var(--p-petrol-975);--color-accent-subtle:var(--p-petrol-900);--color-focus:var(--p-petrol-300);
+  --color-success:var(--p-green-300);--color-success-bg:var(--p-green-900);--color-warning:var(--p-amber-300);--color-warning-bg:var(--p-amber-900);--color-danger:var(--p-red-300);--color-danger-bg:var(--p-red-900);
+  --color-scrim:rgb(0 0 0 / .56);--color-inverse-bg:var(--p-ink-100);--color-inverse-text:var(--p-gray-900);--shadow-raised:none;--code-bg:var(--p-ink-950);color-scheme:dark;
+}}
+@media (prefers-reduced-motion:reduce){.rr{--dur-fast:0ms;--dur-base:0ms;--dur-slow:0ms}}
+@media (pointer:coarse){.rr{--btn-h:44px}}

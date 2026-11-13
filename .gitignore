@@ -9,3 +9,4 @@ output/*.zip
 node_modules/
 .DS_Store
 web/.vite/
+.claude/
