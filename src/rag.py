@@ -87,8 +87,10 @@ def retrieve(query, k=3, *, kind=None, index_path=None, real=False):
     index = load_index(index_path or default_index(real), real)
     if index is None:
         return None
-    return [{"trecho": d.page_content, **d.metadata} for d in
-            index.similarity_search(query, k=k, fetch_k=50, filter={"kind": kind} if kind else None)]
+    # FAISS returns squared L2; with normalized vectors, cosine similarity = 1 - d/2.
+    return [{"trecho": d.page_content, **d.metadata, "score": round(max(0.0, min(1.0, 1 - float(dist) / 2)), 2)}
+            for d, dist in index.similarity_search_with_score(
+                query, k=k, fetch_k=50, filter={"kind": kind} if kind else None)]
 
 
 def rewrite_job_query(query, llm=None):

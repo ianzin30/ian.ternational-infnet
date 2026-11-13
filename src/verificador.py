@@ -24,6 +24,7 @@ def verify(job, claim, llm=None, *, use_nli=True):
     about_brazil = re.search(r"\b(?:brazil|brasil|worldwide|latam)\b", t)
     affirmative = about_brazil and not re.search(r"\b(?:not|cannot|exclud\w*|no|incert\w*)\b", t)
     result = "incerta"
+    nli_label = nli_score = None
     if affirmative and status == "descartado":
         result = "contradita"
     elif not affirmative and about_brazil and status == "descartado":
@@ -46,6 +47,9 @@ def verify(job, claim, llm=None, *, use_nli=True):
                 model = nli_model()
                 scores = model.predict([pair])[0]
             label = str(model.model.config.id2label[int(scores.argmax())]).lower()
+            import numpy as np
+            probs = np.exp(scores - scores.max())
+            nli_label, nli_score = label, round(float(probs.max() / probs.sum()), 2)
             reason += f" NLI: {label}."
             if result != "contradita" and label == "contradiction":
                 result = "contradita"
@@ -73,4 +77,5 @@ def verify(job, claim, llm=None, *, use_nli=True):
                 reason += " Checagem por LLM sem resultado válido."
         except Exception:
             reason += " Checagem por LLM indisponível."
-    return Verificacao(job_id=job.id, claim=claim, status=result, evidence=premise, reason=reason)
+    return Verificacao(job_id=job.id, claim=claim, status=result, evidence=premise, reason=reason,
+                       nli_label=nli_label, nli_score=nli_score)

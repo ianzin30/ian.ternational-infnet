@@ -61,6 +61,11 @@ Para cada vaga, inclua uma afirmação curta em inglês sobre elegibilidade base
 Não invente fatos, números nem trechos. 'Remote, US only' exclui Brasil; 'Remote' sozinho é inconclusivo.
 Em câmbio, acione converter_moeda apenas para o ID resolvido. Em SQL, acione consultar_candidaturas.
 Em currículo ou carta, acione recuperar_contexto. Nunca envie candidaturas.
+Memória: se o pedido revelar um fato ou preferência do usuário que valha para conversas futuras
+(tecnologia a evitar, senioridade, fuso aceito, como mostrar salários), acione guardar_memoria com
+escopo "longo" e o tipo CoALA (semântica = fato sobre o usuário; procedural = regra de como responder;
+episódica = algo que aconteceu). Preferência só desta conversa (tom, tamanho, idioma): escopo "conversa".
+Não guarde o pedido em si nem dados de anúncios.
 """
 
 AGENT_SYSTEM += """
@@ -70,3 +75,25 @@ Anúncio: "Remote position." Ação: marque elegibilidade incerta. Evidência: n
 Anúncio: "Worldwide remote, including Brazil." Ação: elegibilidade geográfica confirmada.
 Cheque em ordem: região explícita, restrições do candidato, aderência, evidência. Retorne apenas a conclusão e a fonte.
 """
+
+
+RESPOSTA_SYSTEM = """Você é o ian.ternational, assistente de vagas remotas para quem mora no Brasil.
+Escreva a resposta final em português, em texto corrido e natural, a partir do RASCUNHO VERIFICADO.
+Regras: use somente fatos, nomes, números e valores presentes no rascunho; não acrescente vagas, salários,
+países nem conclusões; mantenha a ordem e a numeração das vagas; cite a fonte que falhou, se houver;
+não repita os cards (eles aparecem abaixo da resposta); no máximo 4 frases curtas, sem markdown.
+Respeite as preferências desta conversa e as memórias do usuário quando existirem."""
+
+
+def resposta_chain(model=None):
+    """Redige a resposta final. Sem modelo (modo demo), devolve o rascunho verificado palavra a palavra."""
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", RESPOSTA_SYSTEM),
+        ("human", "Pedido: {pedido}\nPreferências desta conversa: {preferencias}\n"
+                  "Memórias do usuário: {memorias}\n\nRASCUNHO VERIFICADO:\n{rascunho}"),
+    ])
+    def local(value):
+        import re as _re
+        for piece in _re.findall(r"\S+\s*", value.to_messages()[-1].content.split("RASCUNHO VERIFICADO:\n", 1)[-1]):
+            yield piece
+    return prompt | (model or RunnableLambda(local)) | StrOutputParser()

@@ -2,9 +2,11 @@ import logging
 from dataclasses import dataclass, field
 from threading import RLock
 
+from langchain_classic.memory import ConversationBufferMemory
 from langchain_community.vectorstores import FAISS
 from langchain_core.chat_history import InMemoryChatMessageHistory
 
+from .eventos import Emissor
 from .models import Entidades, Vaga
 from .rag import embeddings
 
@@ -23,6 +25,20 @@ class Session:
     memory_index: FAISS | None = None
     known: set[str] = field(default_factory=set)
     real: bool = False
+    prefs: list[str] = field(default_factory=list)
+    emit: Emissor = field(default_factory=Emissor)
+    user_id: str = "local"
+    janela: dict = field(default_factory=dict)
+    ultimo: dict = field(default_factory=dict)
+    buffer: ConversationBufferMemory = None
+
+    def __post_init__(self):
+        # Short-term memory: the classic buffer wraps the same history that
+        # RunnableWithMessageHistory reads and writes for this session_id.
+        self.buffer = ConversationBufferMemory(chat_memory=self.history, return_messages=True)
+
+    def mensagens(self):
+        return self.buffer.load_memory_variables({})["history"]
 
     def trim(self, llm=None, limit=8):
         excess = len(self.history.messages) - limit

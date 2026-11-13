@@ -1,18 +1,16 @@
 import os
-from time import monotonic
-from uuid import UUID
 
 from langchain_classic.agents import AgentType, initialize_agent
-from langchain_classic.chains.router.base import RouterChain
 from langchain_classic.memory import ConversationBufferMemory, ConversationSummaryBufferMemory
 from langchain_classic.output_parsers import OutputFixingParser
-from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.language_models.fake import FakeListLLM
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import RunnableLambda, RunnableParallel, chain
 from langchain_core.tools import Tool, tool
 
 from .config import DATA, live_model
+from .eventos import ToolLog
+from .roteador import RoteadorVagas
 from .agente import output_text
 from .executor import make_executor, scripted_model
 from .prompts import AGENT_SYSTEM, avaliar_fit, perfil_local, resumo_chain
@@ -29,50 +27,18 @@ QUESTIONS = (
 )
 
 
-class RoteadorVagas(RouterChain):
-    @property
-    def input_keys(self):
-        return ["pedido"]
-
-    def _call(self, inputs, run_manager=None):
-        pedido = interpretar(inputs["pedido"])
-        return {"destination": pedido.intencao, "next_inputs": {"pedido": inputs["pedido"]}}
-
-
-class ToolLog(BaseCallbackHandler):
-    def __init__(self):
-        self.events, self.start = [], {}
-
-    def on_tool_start(self, serialized, input_str, *, run_id: UUID, **kwargs):
-        self.start[run_id] = (serialized["name"], monotonic())
-        self.events.append({"evento": "action", "tool": serialized["name"], "input": input_str})
-
-    def on_tool_end(self, output, *, run_id: UUID, **kwargs):
-        name, start = self.start.pop(run_id)
-        self.events.append({"evento": "observation", "tool": name, "duration_ms": round((monotonic() - start)*1000),
-                            "output": str(output)[:250]})
-
-    def on_llm_end(self, response, **kwargs):
-        output = response.llm_output or {}
-        usage = output.get("token_usage") or output.get("usage")
-        if not usage:
-            usage = next((getattr(getattr(g, "message", None), "usage_metadata", None)
-                          for row in response.generations for g in row
-                          if getattr(getattr(g, "message", None), "usage_metadata", None)), None)
-        self.events.append({"evento": "modelo", "tokens": usage})
-
-
 def _no_key_llm(outputs):
     return FakeListLLM(responses=outputs, custom_get_token_ids=lambda value: list(range(len(value.split()))))
 
 
-def react_demo(*, live=False):
+def react_demo(*, live=False, pergunta="Busque vagas remotas de Python.", llm=None):
+    """ReAct clássico: initialize_agent + ZERO_SHOT_REACT_DESCRIPTION, com memória e callbacks."""
     providers = Providers(not live, fixtures(DATA))
     trace = ToolLog()
-    llm = live_model() if os.getenv("NOTEBOOK_OPENAI") == "1" else _no_key_llm([
+    llm = llm or (live_model() if os.getenv("NOTEBOOK_OPENAI") == "1" else _no_key_llm([
         "Thought: Preciso de anúncios da stack solicitada.\nAction: buscar_vagas\nAction Input: Python",
         "Thought: A busca devolveu anúncios.\nFinal Answer: Consulte a observação para ver as vagas.",
-    ])
+    ]))
     memory = ConversationSummaryBufferMemory(llm=llm, memory_key="chat_history",
                                               output_key="output", max_token_limit=120)
     def search(stack):
@@ -85,12 +51,15 @@ def react_demo(*, live=False):
     tools = [Tool(name="buscar_vagas", func=search, description="Busca vagas por stack"),
              Tool(name="converter_moeda", func=convert, description="Consulta USD ou EUR em BRL")]
     agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-                             memory=memory, return_intermediate_steps=True)
-    output = agent.invoke({"input": "Busque vagas remotas de Python."}, config={"callbacks": [trace]})
+                             memory=memory, return_intermediate_steps=True, max_iterations=4,
+                             handle_parsing_errors=True)
+    output = agent.invoke({"input": pergunta}, config={"callbacks": [trace]})
     return {"modelo": "roteirizado" if isinstance(llm, FakeListLLM) else "OpenAI",
             "fontes_ao_vivo": live, "resposta": output_text(output["output"]),
             "decisao": "Consultar o catálogo pela stack Python.",
             "passos": [(act.tool, str(obs)) for act, obs in output["intermediate_steps"]],
+            "ciclo": [{"log": act.log.strip(), "tool": act.tool, "input": str(act.tool_input),
+                       "observation": str(obs)[:400]} for act, obs in output["intermediate_steps"]],
             "callbacks": trace.events, "memoria": memory.buffer}
 
 
