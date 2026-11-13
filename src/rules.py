@@ -107,6 +107,10 @@ def restrictions(job, entities, profile):
     status, evidence, reason = geo(job)
     if status == "descartado":
         return status, evidence, reason
+    for skill in entities.evitar_skills:
+        quote = snippet(f"{job.title}. {job.description}", rf"(?<![a-z0-9]){re.escape(plain(skill))}(?![a-z0-9])")
+        if quote:
+            return "descartado", quote, f"Você pediu para evitar {skill} (memória de longo prazo)."
     checks = []
     if entities.fuso is not None:
         zone = re.search(r"\bUTC\s*([+-]\d{1,2})\b", job.description, re.I)

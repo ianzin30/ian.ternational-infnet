@@ -32,6 +32,7 @@ class Entidades(BaseModel):
     aceita_brasil: bool | None = None
     ingles: str | None = None
     posicao: int | None = None
+    evitar_skills: list[str] = Field(default_factory=list)
 
 
 class Pedido(BaseModel):
@@ -43,8 +44,12 @@ class SessionRequest(BaseModel):
     session_id: str = Field(min_length=1, max_length=80, pattern=r"^[a-zA-Z0-9_-]+$")
 
 
+USER_ID = Field(default="local", min_length=1, max_length=80, pattern=r"^[a-zA-Z0-9_-]+$")
+
+
 class ChatIn(SessionRequest):
     message: str = Field(min_length=1, max_length=3000, pattern=r"\S")
+    user_id: str = USER_ID
 
 
 class Recomendacao(BaseModel):
@@ -74,6 +79,8 @@ class Verificacao(BaseModel):
     status: Literal["confirmada", "contradita", "incerta", "indisponível"]
     evidence: str
     reason: str
+    nli_label: str | None = None
+    nli_score: float | None = None
 
 
 class ChatOut(BaseModel):
@@ -87,3 +94,12 @@ class ChatOut(BaseModel):
 class CandidaturaIn(SessionRequest):
     vaga_id: str = Field(min_length=1, max_length=180)
     status: Literal["salva", "enviada", "descartada"]
+    user_id: str = USER_ID
+
+
+class ModeloIn(BaseModel):
+    id: str = Field(min_length=1, max_length=80)
+
+
+class ReactIn(BaseModel):
+    message: str = Field(min_length=1, max_length=500, pattern=r"\S")
