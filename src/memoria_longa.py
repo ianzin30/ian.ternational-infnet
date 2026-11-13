@@ -90,9 +90,10 @@ def extrair_por_regras(texto):
                       r"(?:de|com|em|que pedem|que usam)?\s*([a-z0-9#+.]+)", q)
     ignore = {"vaga", "vagas", "empresa", "empresas", "mais", "muito", "nada", "isso", "que", "ver", "saber",
               "o", "a", "os", "as", "um", "uma"}
-    if avoid and avoid[1] not in ignore:
-        original = re.search(rf"(?i)(?<![\w]){re.escape(avoid[1])}(?![\w])", texto)  # keep the user's casing
-        longo.append(("semântica", f"Evita vagas com {cap(original[0] if original else avoid[1])}"))
+    term = avoid[1].rstrip(".") if avoid else ""
+    if term and term not in ignore:
+        original = re.search(rf"(?i)(?<![\w]){re.escape(term)}(?![\w])", texto)  # keep the user's casing
+        longo.append(("semântica", f"Evita vagas com {cap(original[0] if original else term)}"))
     if re.search(r"salario|salarios|valor|valores", q) and re.search(r"em reais|em r\$|em brl|reais", q):
         longo.append(("procedural", "Mostrar salário sempre em R$"))
     zone = re.search(r"fuso[^0-9]{0,30}(\d{1,2})\s*h", q) or re.search(r"(\d{1,2})\s*h(?:oras?)?\s+de\s+(?:diferenca|fuso)", q)

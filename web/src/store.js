@@ -91,7 +91,8 @@ export const state = reactive({
   modelos: { ativo: null, modo: 'dummy', opcoes: [] }, menu: false, trocarPara: null, trocando: false,
   cv: null, pdf: { paginas: 1, largura: 595, altura: 842 }, cvEnvio: null, cvErro: null, cvConfirmar: false,
   arrastando: false, leitor: null,
-  conversas: salvo.conversas || [], convAtual: null, arquivo: salvo.arquivo || {},
+  // Only conversations whose turns were saved come back after a reload.
+  conversas: (salvo.conversas || []).filter((c) => salvo.arquivo?.[c.id]?.turnos?.length), convAtual: null, arquivo: salvo.arquivo || {},
   memLonga: [], memSessao: [], memNovas: [], janela: {}, memAberto: false, memAba: 'longo', apagando: null,
   trilho: false, trilhoMin: guardado('ian.trilhoMin', false), ladoMin: guardado('ian.ladoMin', false),
   aval: { disponivel: false }, largura: window.innerWidth, escuroSistema: false,
@@ -238,6 +239,7 @@ async function rodar(t) {
     }
     if (t.status !== 'pronto') throw new Error('A conexão terminou antes da resposta.')
     if (t.guardou.length) state.memNovas.push(...t.guardou.map((g) => g.texto))
+    if (state.convAtual) state.arquivo[state.convAtual] = foto()
     carregarMemoria().catch(() => {})
   } catch (erro) {
     t.status = 'erro'
@@ -477,7 +479,8 @@ function lado() {
       if (det?.temPrompt) rub2 = '2.5 PTCF · 2.2 ReAct'
       if (det?.mem) rub2 = '3.1 · 3.2 · 3.4'
       const fonte = reg.source || it.fonte
-      const semantica = !(it.chave === 'intencao' || it.chave === 'historico') || t.real
+      // Without a model (demo mode) only retrieval and NLI still depend on a model's interpretation.
+      const semantica = t.real || it.chave === 'curriculo' || it.chave === 'verificacao' || TIPOS[it.chave][0] === 'hardcoded'
       const react = t.react
       tl.push({
         grupo: false, item: true,
@@ -726,7 +729,7 @@ function registrarConversa(titulo) {
   state.conversas.unshift(c)
   state.convAtual = c.id
 }
-const foto = () => ({ turnos: JSON.parse(JSON.stringify(state.turnos)), acoes: { ...state.acoes }, sessao: state.sessao })
+const foto = () => ({ turnos: JSON.parse(JSON.stringify(state.turnos.filter((t) => t.status === 'pronto'))).map((t) => ({ ...t, stream: null, react: t.react?.ciclo ? t.react : null })), acoes: { ...state.acoes }, sessao: state.sessao })
 function saiDaConversa() {
   if (!state.convAtual && state.turnos.length) registrarConversa(state.turnos[0].pergunta)
   if (state.convAtual) state.arquivo[state.convAtual] = foto()

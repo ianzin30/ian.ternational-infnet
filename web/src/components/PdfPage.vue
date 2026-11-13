@@ -11,16 +11,24 @@ const props = defineProps({
 })
 const tela = ref(null)
 let tarefa = null
+let pedido = 0
 
+// Width changes arrive in bursts (fit, zoom); only the latest request may draw on the canvas.
 async function desenhar() {
+  const meu = ++pedido
   const canvas = tela.value
   if (!canvas) return
   try {
     const page = await paginaPdf(props.chave, props.pagina)
+    if (meu !== pedido) return
+    if (tarefa) {
+      tarefa.cancel()
+      try { await tarefa.promise } catch { /* cancelada */ }
+      if (meu !== pedido) return
+    }
     const base = page.getViewport({ scale: 1 })
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const viewport = page.getViewport({ scale: (props.largura / base.width) * dpr })
-    if (tarefa) tarefa.cancel()
     canvas.width = Math.round(viewport.width)
     canvas.height = Math.round(viewport.height)
     tarefa = page.render({ canvas, canvasContext: canvas.getContext('2d'), viewport })
