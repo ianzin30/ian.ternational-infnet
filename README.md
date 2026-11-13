@@ -1,4 +1,6 @@
-# Radar Remoto
+# ian.ternational
+
+> Nome do agente na interface. O código e os notebooks ainda usam o nome de trabalho, Radar Remoto.
 
 **Encontre vagas remotas internacionais e confira a evidência por trás de cada recomendação.**
 
@@ -9,7 +11,7 @@ uv pip sync requirements.txt
 .venv/bin/python -m scripts.cli
 ```
 
-Digite `Mostre vagas remotas de Python`, depois `Só as que aceitam Brasil` e `Converta o salário da segunda`. A CLI mostra as ferramentas usadas e os trechos que sustentam a decisão. Para experimentar no navegador, execute `.venv/bin/uvicorn src.api:app` e abra [localhost:8000](http://127.0.0.1:8000). A página HTML é provisória e pode ser substituída sem alterar o agente.
+Digite `Mostre vagas remotas de Python`, depois `Só as que aceitam Brasil` e `Converta o salário da segunda`. A CLI mostra as ferramentas usadas e os trechos que sustentam a decisão. Para usar a interface, execute `.venv/bin/uvicorn src.api:app` e abra [localhost:8000](http://127.0.0.1:8000). Ela mostra, a cada turno, as etapas do agente, a fonte de cada dado e o item da rubrica que a etapa cobre: veja o [mapa da rubrica na interface](docs/ui-rubrica.md).
 
 ## Executar sem chave
 
@@ -19,11 +21,28 @@ O modo padrão usa currículo, vagas e taxas fictícias. O modelo de ferramentas
 |---|---|
 | `.venv/bin/python -m scripts.setup_assets` | Prepara currículo, FAISS e pesos do NLI. |
 | `.venv/bin/python -m scripts.cli` | Abre a CLI com evidências por turno. Use `/sair` para encerrar. |
-| `.venv/bin/uvicorn src.api:app` | Serve a UI provisória, `/chat`, `/docs` e `/health`. |
+| `.venv/bin/uvicorn src.api:app` | Serve a interface (Vue, já compilada em `web/dist`), a API e `/docs`. |
+| `npm --prefix web install && npm --prefix web run build` | Recompila a interface depois de editar `web/src`. Só é preciso Node para isso. |
 | `.venv/bin/python -m scripts.evaluate` | Roda os 12 cenários e salva `output/avaliacao-local.json`. |
 | `.venv/bin/python -m pytest -q` | Testa os cenários, contrato HTTP, isolamento SQL e regras de evidência. |
 
 A rota `POST /candidaturas` registra uma ação que o candidato já tomou. Depois de buscar, envie `session_id`, `vaga_id` e `status` (`salva`, `enviada` ou `descartada`) pela página `/docs`. A operação atualiza apenas o SQLite local; não envia formulários a empregadores.
+
+## Interface e API
+
+A interface é uma aplicação Vue 3 em `web/src`, transplantada do protótipo do Claude Design ([handoff](web/HANDOFF.md)). O FastAPI serve o build de `web/dist`, então não é preciso Node para rodar.
+
+| Rota | Uso |
+|---|---|
+| `POST /chat/stream` | Turno em Server-Sent Events: `stage` (cada etapa, com fonte, duração e dados), `token` (resposta), `memory` e `final`. |
+| `POST /chat` | O mesmo turno, sem streaming. |
+| `POST /react` | Roda o pedido no ReAct clássico (`initialize_agent`) e devolve Thought, Action e Observation. |
+| `GET /memoria`, `DELETE /memoria/{id}` | Memória de longo prazo do usuário (SQLite + FAISS, k=3) e a memória da conversa. |
+| `GET`/`POST /curriculo`, `/curriculo/info`, `/curriculo/reset` | PDF ativo, troca com etapas em SSE e restauração. |
+| `GET /modelos`, `POST /modelo` | Alterna entre o modelo real e o demo roteirizado. |
+| `GET /avaliacao` | Métricas do último experimento publicado no LangSmith. |
+
+No modo real, o modelo decide o que guardar na memória pela ferramenta `guardar_memoria`; no modo demo, regras locais fazem esse papel e a interface mostra a origem. Em macOS, `torch` e `faiss-cpu` carregam cada um a sua cópia do OpenMP; `src/config.py` define `KMP_DUPLICATE_LIB_OK=TRUE` para o processo não abortar quando os dois são usados no mesmo turno.
 
 ## Verificar APIs reais e OpenAI
 
@@ -62,7 +81,7 @@ Para reproduzir as chamadas HTTP reais do notebook 03, execute-o com `NOTEBOOK_L
 
 ## Avaliar no LangSmith
 
-Configure `LANGSMITH_API_KEY` e as credenciais do modelo usado como juiz. Depois execute `.venv/bin/python -m scripts.evaluate --langsmith`. O script registra os 12 cenários fictícios, a correção semântica, a trajetória e a proporção de afirmações confirmadas. Use `--share` para gerar também o link público do dataset fictício. Verifique em uma janela anônima o link que será enviado ao professor. O experimento remoto ainda não foi executado neste ambiente.
+Configure `LANGSMITH_API_KEY` e as credenciais do modelo usado como juiz. Depois execute `.venv/bin/python -m scripts.evaluate --langsmith`. O script registra os 12 cenários fictícios, a correção semântica, a trajetória e a proporção de afirmações confirmadas. Use `--share` para gerar também o link público do dataset fictício. Verifique em uma janela anônima o link que será enviado ao professor. O script também grava `output/langsmith.json`, que a interface lê no bloco "Avaliação no LangSmith". Último experimento (13/11/2026): correção semântica 12/12, regressão 12/12, trajetória 12/12 e 75% das afirmações confirmadas.
 
 ## Revisar evidências e gravar
 
@@ -71,4 +90,4 @@ Configure `LANGSMITH_API_KEY` e as credenciais do modelo usado como juiz. Depois
 - [Roteiro para gravar a defesa](docs/gravacao.md)
 - [Resultados dos 12 cenários locais](output/avaliacao-local.json)
 
-Os anúncios de demonstração e o currículo são fictícios. O protótipo usa um perfil por instância e mantém a memória conversacional no processo. O servidor deve rodar localmente durante a apresentação. O projeto usou OpenAI Codex na implementação e Claude Design na interface descartável; a avaliação local e os resultados HTTP foram executados e verificados.
+Os anúncios de demonstração e o currículo são fictícios. O protótipo usa um perfil por instância e mantém a memória conversacional no processo. O servidor deve rodar localmente durante a apresentação. O projeto usou OpenAI Codex na implementação do agente, Claude Design no protótipo da interface e Claude Code na interface em Vue e nas rotas que a servem; a avaliação local e os resultados HTTP foram executados e verificados.

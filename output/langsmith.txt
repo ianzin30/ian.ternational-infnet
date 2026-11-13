@@ -1,4 +1,4 @@
-Experimento: radar-integrador-0b94dc53
-URL do experimento: https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/projects/p/5688720d-d3a7-426b-8f38-82d5034202ee
-Dataset: 96eed1b9-7c17-4bc7-8f03-dffe2d66807b
-Execução: https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/projects/p/5688720d-d3a7-426b-8f38-82d5034202ee/r/01a1d2a9-712e-7d23-a7a9-04c909cc0905?poll=true
+Experimento: radar-integrador-b0137351
+URL do experimento: https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/projects/p/c5603a58-dd3c-4219-ac94-bfd4bcff73c8
+Dataset: 146ad1e1-58dd-4813-ab6e-38538eb07447
+Execução: https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/projects/p/c5603a58-dd3c-4219-ac94-bfd4bcff73c8/r/01a1d5cb-ff49-75ad-b69a-6a8a649392d4?poll=true
