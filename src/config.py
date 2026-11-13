@@ -1,6 +1,12 @@
 import os
 from pathlib import Path
 
+# torch and faiss-cpu each bundle their own libomp on macOS. Once both enter a parallel region the
+# process aborts with "OMP: Error #15" (it happened in real mode, when a memory was indexed before the
+# NLI check). This is the workaround the OpenMP runtime itself documents; it must be set before either
+# library loads, and src.config is the first project module every entry point imports.
+os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
+
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent

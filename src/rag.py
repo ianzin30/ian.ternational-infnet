@@ -104,3 +104,10 @@ def rewrite_job_query(query, llm=None):
     if all(word in normalized for word in ("backend", "senior")):
         return "Senior Backend Engineer"
     return query
+
+
+def termos_em_ingles(query, llm):
+    """Query transformation for the live job search: ads are in English, requests arrive in Portuguese."""
+    result = llm.invoke("Traduza para inglês o cargo ou a tecnologia desta busca de vagas. Responda só com os "
+                        "termos, no máximo 3 palavras, sem 'remote', 'job' ou pontuação.\n" + query)
+    return " ".join(result.text.strip().strip('."\'').split()[:3])

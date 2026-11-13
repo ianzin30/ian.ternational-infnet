@@ -60,7 +60,7 @@ class Providers:
     URLS = {"Remotive": "https://remotive.com/api/remote-jobs",
             "Arbeitnow": "https://www.arbeitnow.com/api/job-board-api"}
 
-    def buscar(self, terms="", emit=None):
+    def buscar(self, terms="", emit=None, nota=None):
         """Consulta as duas fontes em paralelo (RunnableParallel) e emite uma etapa por fonte."""
         def run(name, function):
             start = monotonic()
@@ -81,7 +81,7 @@ class Providers:
                 stage = {"ok": "ok", "dummy": "dummy", "erro": "erro"}.get(status, "cache")
                 emit.fim(key, stage, source=name, detail=detail, duration_ms=duration, data={
                     "url": self.URLS[name], "recebidas": received, "correspondem": len(jobs),
-                    "termos": terms, "situacao": status})
+                    "termos": terms, "situacao": status, **(nota or {})})
             return jobs, ToolCall(name="buscar_vagas", source=name, status=status, detail=detail, duration_ms=duration)
         result = RunnableParallel(
             remotive=RunnableLambda(lambda _: run("Remotive", self.remotive)),

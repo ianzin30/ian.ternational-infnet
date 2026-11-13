@@ -22,7 +22,7 @@ from .memoria import Session
 from .memoria_longa import MemoriaLonga, extrair_por_regras, skills_evitadas
 from .models import ChatOut, Pedido, Recomendacao, ToolCall
 from .prompts import AGENT_SYSTEM, avaliar_fit, perfil_chain, resposta_chain, skills_in
-from .rag import build_index, default_index, index_for_resume, read_pdf, retrieve
+from .rag import build_index, default_index, index_for_resume, read_pdf, retrieve, termos_em_ingles
 from .repository import Repository, fixtures
 from .roteador import ROTAS, RoteadorVagas
 from .rules import geo, interpretar, plain, restrictions, salario
@@ -228,6 +228,8 @@ class Radar:
                 "Classifique a intenção e extraia apenas restrições explícitas do pedido em português. "
                 "Use null para omissões. Se houver salário sem período, use mês. "
                 "Converta ordinais em posição. Comparação com currículo é curriculo. "
+                "Se o pedido só declara preferências ou fatos sobre o usuário, sem pedir busca, conversão, "
+                "comparação nem consulta, a intenção é ajuda. Em cargo e stack, mantenha os termos do usuário. "
                 "Em evitar_skills, liste só tecnologias que o usuário pediu para evitar, no pedido ou nas memórias. "
                 f"Memórias do usuário: {[m['texto'] for m in memorias]}\n"
                 f"Resumo da sessão: {session.summary}\nPedido: {message}")
@@ -362,7 +364,20 @@ class Radar:
         def buscar_vagas() -> list:
             """Busca vagas reais ou simuladas segundo os filtros desta sessão."""
             if "jobs" not in results:
-                jobs, calls = self.providers.buscar(session.entities.stack or session.entities.cargo or "", emit)
+                terms = session.entities.stack or session.entities.cargo or ""
+                jobs, calls = self.providers.buscar(terms, emit)
+                if terms and not jobs and self.llm and not any(c.status == "erro" for c in calls):
+                    # Retrieval failure: a Portuguese query finds nothing in English ads. Rewrite and retry.
+                    try:
+                        rewritten = termos_em_ingles(terms, self.llm)
+                    except Exception:
+                        rewritten = ""
+                    if rewritten and plain(rewritten) != plain(terms):
+                        jobs, calls = self.providers.buscar(rewritten, emit, nota={"reescrita": {
+                            "antesQ": terms, "antes": 0, "depoisQ": rewritten,
+                            "diag": "a consulta em português não casou com nenhum anúncio em inglês; "
+                                    "o LLM traduziu os termos e a busca foi refeita."}})
+                        results["reescrita"] = f'A busca por "{terms}" não trouxe anúncios; refiz com "{rewritten}".'
                 self.repo.save(jobs)
                 traces.extend(calls)
                 for call in calls:
@@ -615,6 +630,8 @@ class Radar:
             avoided = [c for c in cards if "Você pediu para evitar" in c.reason]
             if avoided:
                 lines.append(f"Deixei de fora {len(avoided)} vaga(s) por causa da sua preferência guardada: evitar {', '.join(evitar)}.")
+            if results.get("reescrita"):
+                lines.append(results["reescrita"])
             searches = [t for t in traces if t.name == "buscar_vagas"]
             failed = sorted({t.source for t in searches if t.status == "erro"})
             stale = sorted({t.source for t in searches if t.status == "cache desatualizado"})

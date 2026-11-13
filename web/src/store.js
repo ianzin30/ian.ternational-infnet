@@ -408,7 +408,9 @@ function detalhe(t, chave, reg) {
     const resumo = reg.status === 'dummy' ? `Modo demo: ${pl(d.recebidas, 'vaga fictícia local', 'vagas fictícias locais')}, sem chamar a API.`
       : reg.status === 'erro' ? reg.detail
       : `${pl(d.recebidas, 'vaga recebida', 'vagas recebidas')}, ${d.correspondem} ${d.termos ? `com “${d.termos}”` : 'na busca'}.${reg.status === 'cache' ? ' Resposta do cache.' : ''}`
-    return { ...base, resumo, codigo: `GET ${d.url.replace('https://', '')}\n${reg.status === 'dummy' ? 'não chamada (modo demo)' : `${d.situacao} · ${pl(d.recebidas, 'vaga', 'vagas')} · ${fmtMs(reg.ms)}`}` }
+    const rec = d.reescrita ? { antesQ: d.reescrita.antesQ, antes: [{ s: '0', t: 'nenhum anúncio com esses termos' }], depoisQ: d.reescrita.depoisQ,
+      depois: [{ s: String(d.correspondem), t: `${pl(d.correspondem, 'anúncio encontrado', 'anúncios encontrados')} nesta fonte` }], diag: d.reescrita.diag, tecnica: 'consulta traduzida pelo LLM' } : null
+    return { ...base, resumo, rec, codigo: `GET ${d.url.replace('https://', '')}\n${reg.status === 'dummy' ? 'não chamada (modo demo)' : `${d.situacao} · ${pl(d.recebidas, 'vaga', 'vagas')} · ${fmtMs(reg.ms)}`}` }
   }
   if (chave === 'cambio') {
     if (!d.par) return base
