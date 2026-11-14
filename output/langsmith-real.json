@@ -1,0 +1,836 @@
+{
+  "experimento": "radar-integrador-modelo-real-bc026520",
+  "url": "https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/projects/p/64ae75ce-55e8-48a5-a13f-9b69b9519e17",
+  "dataset": "radar-modelo-real-c9033593",
+  "dataset_url": "https://smith.langchain.com/o/f3d9bd48-9e7a-4483-9e65-dd3af105169e/datasets/0406dbb8-f458-4ea9-95bb-ff90a92f00c6",
+  "modelo": "gpt-6-luna",
+  "casos": [
+    {
+      "case": "elegibilidade-brasil",
+      "output": {
+        "case": "elegibilidade-brasil",
+        "turns": [
+          {
+            "message": "Busque vagas remotas de Python que aceitam candidatos no Brasil.",
+            "route": "busca",
+            "model_tools": [
+              "buscar_vagas"
+            ],
+            "fallback_tools": [],
+            "answer": "Encontrei 2 vagas remotas de Python com elegibilidade confirmada para candidatos no Brasil. Na amostra exibida, há também 1 caso pendente e 1 descartado.\n\n1. Senior Python Backend Engineer · Aurora Labs.\n2. Python Platform Engineer · Orbit Works.",
+            "recommendations": [
+              {
+                "id": "demo-aurora",
+                "title": "Senior Python Backend Engineer",
+                "company": "Aurora Labs",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/aurora",
+                "status": "recomendado",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. Também atende aos requisitos de inglês. Aderência ao currículo: Python, FastAPI, PostgreSQL.",
+                "evidence": "Worldwide remote, including Brazil. … B2 English required.",
+                "skills": [
+                  "Python",
+                  "FastAPI",
+                  "PostgreSQL"
+                ],
+                "salary": "USD 6,500.00 / mês"
+              },
+              {
+                "id": "demo-orbit",
+                "title": "Python Platform Engineer",
+                "company": "Orbit Works",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/orbit",
+                "status": "recomendado",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. Também atende aos requisitos de inglês. Aderência ao currículo: Python, Docker.",
+                "evidence": "Remote in LATAM, including Brazil. … B2 English required.",
+                "skills": [
+                  "Python",
+                  "Docker"
+                ],
+                "salary": "EUR 5,400.00 / mês"
+              },
+              {
+                "id": "demo-moon",
+                "title": "Python Software Engineer",
+                "company": "Moon Studio",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/moon",
+                "status": "pendente",
+                "reason": "O anúncio não confirma elegibilidade no Brasil.",
+                "evidence": "Remote position.",
+                "skills": [
+                  "Python"
+                ],
+                "salary": null
+              },
+              {
+                "id": "demo-atlas",
+                "title": "Senior Python Developer",
+                "company": "Atlas Systems",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/atlas",
+                "status": "descartado",
+                "reason": "O anúncio exclui candidatos no Brasil.",
+                "evidence": "Remote, US only.",
+                "skills": [
+                  "Python",
+                  "FastAPI",
+                  "PostgreSQL",
+                  "Docker"
+                ],
+                "salary": "USD 9,000.00 / mês"
+              }
+            ],
+            "verification": [
+              {
+                "job_id": "demo-aurora",
+                "claim": "Eligible: worldwide remote, including Brazil.",
+                "status": "confirmada",
+                "evidence": "Worldwide remote, including Brazil.",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 0.98
+              },
+              {
+                "job_id": "demo-orbit",
+                "claim": "Eligible: remote in LATAM, including Brazil.",
+                "status": "confirmada",
+                "evidence": "Remote in LATAM, including Brazil.",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 0.84
+              },
+              {
+                "job_id": "demo-moon",
+                "claim": "Applicants based in Brazil are eligible.",
+                "status": "incerta",
+                "evidence": "Remote position.",
+                "reason": "O anúncio não confirma elegibilidade no Brasil. NLI: neutral. Coerência LLM: incerta.",
+                "nli_label": "neutral",
+                "nli_score": 1.0
+              },
+              {
+                "job_id": "demo-atlas",
+                "claim": "Applicants based in Brazil are not eligible.",
+                "status": "confirmada",
+                "evidence": "Remote, US only.",
+                "reason": "O anúncio exclui candidatos no Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 1.0
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "buscar_vagas",
+                "status": "dummy",
+                "detail": "4 vaga(s) correspondem à busca.",
+                "duration_ms": 0,
+                "source": "Remotive"
+              },
+              {
+                "name": "buscar_vagas",
+                "status": "dummy",
+                "detail": "0 vaga(s) correspondem à busca.",
+                "duration_ms": 0,
+                "source": "Arbeitnow"
+              }
+            ],
+            "memory": {
+              "usadas": [],
+              "guardadas": [],
+              "sessao": [],
+              "evitar": []
+            },
+            "reference": null,
+            "sql_rows": null
+          }
+        ]
+      },
+      "error": null,
+      "scores": {
+        "correcao_semantica": {
+          "score": 1,
+          "comment": "A resposta recomenda Aurora e Orbit, cujas evidências confirmam elegibilidade no Brasil. Moon fica pendente porque a região não é especificada, e Atlas é descartada por ser restrita aos EUA. A descrição e os status dos cards estão coerentes com o critério."
+        },
+        "trajetoria_modelo": {
+          "score": 1,
+          "comment": "[{\"turn\": 1, \"expected\": [\"buscar_vagas\"], \"actual\": [\"buscar_vagas\"], \"fallback\": []}]"
+        },
+        "rotas": {
+          "score": 1,
+          "comment": "['busca'] esperado: ['busca']"
+        }
+      }
+    },
+    {
+      "case": "preferencia-entre-sessoes",
+      "output": {
+        "case": "preferencia-entre-sessoes",
+        "turns": [
+          {
+            "message": "Lembre-se para futuras conversas: prefiro evitar vagas que exigem Docker.",
+            "route": "ajuda",
+            "model_tools": [
+              "guardar_memoria"
+            ],
+            "fallback_tools": [],
+            "answer": "Anotado: vou considerar sua preferência por evitar vagas que exigem Docker nas próximas buscas.",
+            "recommendations": [],
+            "verification": [],
+            "tool_calls": [],
+            "memory": {
+              "usadas": [
+                {
+                  "id": 1,
+                  "tipo": "semântica",
+                  "texto": "A pessoa prefere evitar vagas que exigem Docker.",
+                  "sim": 0.81
+                }
+              ],
+              "guardadas": [
+                {
+                  "id": 1,
+                  "tipo": "semântica",
+                  "texto": "A pessoa prefere evitar vagas que exigem Docker.",
+                  "origem": "LLM · ferramenta guardar_memoria"
+                }
+              ],
+              "sessao": [],
+              "evitar": []
+            },
+            "reference": null,
+            "sql_rows": null
+          },
+          {
+            "message": "Busque vagas remotas de Python que aceitam Brasil.",
+            "route": "busca",
+            "model_tools": [
+              "buscar_vagas"
+            ],
+            "fallback_tools": [],
+            "answer": "Na amostra exibida, há 1 vaga recomendada, 1 pendente e 2 descartadas.\n\n1. Senior Python Backend Engineer · Aurora Labs.\n\nDeixei de fora 1 vaga por causa da sua preferência de evitar Docker.",
+            "recommendations": [
+              {
+                "id": "demo-aurora",
+                "title": "Senior Python Backend Engineer",
+                "company": "Aurora Labs",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/aurora",
+                "status": "recomendado",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. Também atende aos requisitos de inglês. Aderência ao currículo: Python, FastAPI, PostgreSQL.",
+                "evidence": "Worldwide remote, including Brazil. … B2 English required.",
+                "skills": [
+                  "Python",
+                  "FastAPI",
+                  "PostgreSQL"
+                ],
+                "salary": "USD 6,500.00 / mês"
+              },
+              {
+                "id": "demo-moon",
+                "title": "Python Software Engineer",
+                "company": "Moon Studio",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/moon",
+                "status": "pendente",
+                "reason": "O anúncio não confirma elegibilidade no Brasil.",
+                "evidence": "Remote position.",
+                "skills": [
+                  "Python"
+                ],
+                "salary": null
+              },
+              {
+                "id": "demo-atlas",
+                "title": "Senior Python Developer",
+                "company": "Atlas Systems",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/atlas",
+                "status": "descartado",
+                "reason": "O anúncio exclui candidatos no Brasil.",
+                "evidence": "Remote, US only.",
+                "skills": [
+                  "Python",
+                  "FastAPI",
+                  "PostgreSQL",
+                  "Docker"
+                ],
+                "salary": "USD 9,000.00 / mês"
+              },
+              {
+                "id": "demo-orbit",
+                "title": "Python Platform Engineer",
+                "company": "Orbit Works",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/orbit",
+                "status": "descartado",
+                "reason": "Você pediu para evitar Docker (memória de longo prazo).",
+                "evidence": "Python and Docker.",
+                "skills": [
+                  "Python",
+                  "Docker"
+                ],
+                "salary": "EUR 5,400.00 / mês"
+              }
+            ],
+            "verification": [
+              {
+                "job_id": "demo-aurora",
+                "claim": "Geographic eligibility confirmed: worldwide remote, including Brazil.",
+                "status": "confirmada",
+                "evidence": "Worldwide remote, including Brazil.",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 1.0
+              },
+              {
+                "job_id": "demo-moon",
+                "claim": "Geographic eligibility is unclear: the ad says remote but gives no region.",
+                "status": "incerta",
+                "evidence": "Remote position.",
+                "reason": "O anúncio não confirma elegibilidade no Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 0.99
+              },
+              {
+                "job_id": "demo-atlas",
+                "claim": "Applicants based in Brazil are not eligible.",
+                "status": "confirmada",
+                "evidence": "Remote, US only.",
+                "reason": "O anúncio exclui candidatos no Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 1.0
+              },
+              {
+                "job_id": "demo-orbit",
+                "claim": "Applicants based in Brazil are eligible.",
+                "status": "confirmada",
+                "evidence": "Remote in LATAM, including Brazil.",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 0.98
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "buscar_vagas",
+                "status": "dummy",
+                "detail": "4 vaga(s) correspondem à busca.",
+                "duration_ms": 0,
+                "source": "Remotive"
+              },
+              {
+                "name": "buscar_vagas",
+                "status": "dummy",
+                "detail": "0 vaga(s) correspondem à busca.",
+                "duration_ms": 0,
+                "source": "Arbeitnow"
+              }
+            ],
+            "memory": {
+              "usadas": [
+                {
+                  "id": 1,
+                  "tipo": "semântica",
+                  "texto": "A pessoa prefere evitar vagas que exigem Docker.",
+                  "sim": 0.42
+                }
+              ],
+              "guardadas": [],
+              "sessao": [],
+              "evitar": [
+                "Docker"
+              ]
+            },
+            "reference": null,
+            "sql_rows": null
+          }
+        ]
+      },
+      "error": null,
+      "scores": {
+        "correcao_semantica": {
+          "score": 1,
+          "comment": "A preferência por evitar vagas que exigem Docker foi guardada e aparece como memória usada na busca. Orbit foi descartada por exigir Docker, enquanto Aurora permaneceu recomendada."
+        },
+        "trajetoria_modelo": {
+          "score": 1,
+          "comment": "[{\"turn\": 1, \"expected\": [\"guardar_memoria\"], \"actual\": [\"guardar_memoria\"], \"fallback\": []}, {\"turn\": 2, \"expected\": [\"buscar_vagas\"], \"actual\": [\"buscar_vagas\"], \"fallback\": []}]"
+        },
+        "rotas": {
+          "score": 1,
+          "comment": "['ajuda', 'busca'] esperado: ['ajuda', 'busca']"
+        }
+      }
+    },
+    {
+      "case": "historico-sql",
+      "output": {
+        "case": "historico-sql",
+        "turns": [
+          {
+            "message": "Quais vagas pagam acima de 5.000 USD por mês e eu ainda não me candidatei?",
+            "route": "candidaturas",
+            "model_tools": [
+              "consultar_candidaturas"
+            ],
+            "fallback_tools": [],
+            "answer": "Encontrei uma vaga, mas o rascunho não informa se ela paga acima de 5.000 USD por mês nem se você já se candidatou.\n\n1. Senior Python Developer · Atlas Systems",
+            "recommendations": [],
+            "verification": [],
+            "tool_calls": [
+              {
+                "name": "consultar_candidaturas",
+                "status": "ok",
+                "detail": "SELECT \"v\".\"title\", \"v\".\"company\"\nFROM \"vagas\" AS \"v\"\nWHERE \"v\".\"currency\" = 'USD'\n  AND \"v\".\"salary_min\" > 5000\n  AND (\n    \"v\".\"period\" IS NULL\n    OR lower(\"v\".\"period\") LIKE '%month%'\n    OR lower(\"v\".\"period\") LIKE '%mensal%'\n  )\n  AND NOT EXISTS (\n    SELECT 1\n    FROM \"candidaturas\" AS \"c\"\n    WHERE \"c\".\"vaga_id\" = \"v\".\"id\"\n      AND \"c\".\"status\" = 'enviada'\n  )\nLIMIT 10; | 1 linha(s).",
+                "duration_ms": 7848,
+                "source": "SQLite"
+              }
+            ],
+            "memory": {
+              "usadas": [],
+              "guardadas": [],
+              "sessao": [],
+              "evitar": []
+            },
+            "reference": null,
+            "sql_rows": [
+              {
+                "title": "Senior Python Developer",
+                "company": "Atlas Systems"
+              }
+            ]
+          }
+        ]
+      },
+      "error": null,
+      "scores": {
+        "correcao_semantica": {
+          "score": 1,
+          "comment": "A resposta lista Senior Python Developer, da Atlas Systems, e não inclui Aurora, conforme o critério. Também não aplica filtro geográfico. A ressalva sobre salário e candidatura é desnecessária, pois a consulta já filtrou esses requisitos, mas não altera a vaga apresentada."
+        },
+        "trajetoria_modelo": {
+          "score": 1,
+          "comment": "[{\"turn\": 1, \"expected\": [\"consultar_candidaturas\"], \"actual\": [\"consultar_candidaturas\"], \"fallback\": []}]"
+        },
+        "rotas": {
+          "score": 1,
+          "comment": "['candidaturas'] esperado: ['candidaturas']"
+        }
+      }
+    },
+    {
+      "case": "saudacao",
+      "output": {
+        "case": "saudacao",
+        "turns": [
+          {
+            "message": "Oi",
+            "route": "ajuda",
+            "model_tools": [],
+            "fallback_tools": [],
+            "answer": "Oi! Posso buscar vagas, filtrar por Brasil, converter salários, comparar oportunidades com seu currículo ou consultar candidaturas.",
+            "recommendations": [],
+            "verification": [],
+            "tool_calls": [],
+            "memory": {
+              "usadas": [],
+              "guardadas": [],
+              "sessao": [],
+              "evitar": []
+            },
+            "reference": null,
+            "sql_rows": null
+          }
+        ]
+      },
+      "error": null,
+      "scores": {
+        "correcao_semantica": {
+          "score": 1,
+          "comment": "A resposta retribui a saudação com “Oi!” e oferece ajuda com várias tarefas. Apenas diz que pode buscar vagas; não afirma que já fez uma busca nem que consultou uma fonte."
+        },
+        "trajetoria_modelo": {
+          "score": 1,
+          "comment": "[{\"turn\": 1, \"expected\": [], \"actual\": [], \"fallback\": []}]"
+        },
+        "rotas": {
+          "score": 1,
+          "comment": "['ajuda'] esperado: ['ajuda']"
+        }
+      }
+    },
+    {
+      "case": "cambio-com-memoria",
+      "output": {
+        "case": "cambio-com-memoria",
+        "turns": [
+          {
+            "message": "Busque vagas remotas de Python que aceitam candidatos no Brasil.",
+            "route": "busca",
+            "model_tools": [
+              "buscar_vagas"
+            ],
+            "fallback_tools": [],
+            "answer": "Encontrei duas vagas com elegibilidade confirmada para candidatos no Brasil; na amostra exibida, houve também um caso pendente e um descartado.\n\n1. Senior Python Backend Engineer · Aurora Labs.\n2. Python Platform Engineer · Orbit Works.",
+            "recommendations": [
+              {
+                "id": "demo-aurora",
+                "title": "Senior Python Backend Engineer",
+                "company": "Aurora Labs",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/aurora",
+                "status": "recomendado",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. Também atende aos requisitos de inglês. Aderência ao currículo: Python, FastAPI, PostgreSQL.",
+                "evidence": "Worldwide remote, including Brazil. … B2 English required.",
+                "skills": [
+                  "Python",
+                  "FastAPI",
+                  "PostgreSQL"
+                ],
+                "salary": "USD 6,500.00 / mês"
+              },
+              {
+                "id": "demo-orbit",
+                "title": "Python Platform Engineer",
+                "company": "Orbit Works",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/orbit",
+                "status": "recomendado",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. Também atende aos requisitos de inglês. Aderência ao currículo: Python, Docker.",
+                "evidence": "Remote in LATAM, including Brazil. … B2 English required.",
+                "skills": [
+                  "Python",
+                  "Docker"
+                ],
+                "salary": "EUR 5,400.00 / mês"
+              },
+              {
+                "id": "demo-moon",
+                "title": "Python Software Engineer",
+                "company": "Moon Studio",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/moon",
+                "status": "pendente",
+                "reason": "O anúncio não confirma elegibilidade no Brasil.",
+                "evidence": "Remote position.",
+                "skills": [
+                  "Python"
+                ],
+                "salary": null
+              },
+              {
+                "id": "demo-atlas",
+                "title": "Senior Python Developer",
+                "company": "Atlas Systems",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/atlas",
+                "status": "descartado",
+                "reason": "O anúncio exclui candidatos no Brasil.",
+                "evidence": "Remote, US only.",
+                "skills": [
+                  "Python",
+                  "FastAPI",
+                  "PostgreSQL",
+                  "Docker"
+                ],
+                "salary": "USD 9,000.00 / mês"
+              }
+            ],
+            "verification": [
+              {
+                "job_id": "demo-aurora",
+                "claim": "Eligible geographically: the ad says “Worldwide remote, including Brazil.”",
+                "status": "confirmada",
+                "evidence": "Worldwide remote, including Brazil.",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 0.99
+              },
+              {
+                "job_id": "demo-orbit",
+                "claim": "Eligible geographically: the ad says “Remote in LATAM, including Brazil.”",
+                "status": "confirmada",
+                "evidence": "Remote in LATAM, including Brazil.",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 0.98
+              },
+              {
+                "job_id": "demo-moon",
+                "claim": "Applicants based in Brazil are eligible.",
+                "status": "incerta",
+                "evidence": "Remote position.",
+                "reason": "O anúncio não confirma elegibilidade no Brasil. NLI: neutral. Coerência LLM: incerta.",
+                "nli_label": "neutral",
+                "nli_score": 1.0
+              },
+              {
+                "job_id": "demo-atlas",
+                "claim": "Applicants based in Brazil are not eligible.",
+                "status": "confirmada",
+                "evidence": "Remote, US only.",
+                "reason": "O anúncio exclui candidatos no Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 1.0
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "buscar_vagas",
+                "status": "dummy",
+                "detail": "4 vaga(s) correspondem à busca.",
+                "duration_ms": 0,
+                "source": "Remotive"
+              },
+              {
+                "name": "buscar_vagas",
+                "status": "dummy",
+                "detail": "0 vaga(s) correspondem à busca.",
+                "duration_ms": 0,
+                "source": "Arbeitnow"
+              }
+            ],
+            "memory": {
+              "usadas": [],
+              "guardadas": [],
+              "sessao": [],
+              "evitar": []
+            },
+            "reference": null,
+            "sql_rows": null
+          },
+          {
+            "message": "Converta o salário da segunda vaga para reais.",
+            "route": "cambio",
+            "model_tools": [
+              "converter_moeda"
+            ],
+            "fallback_tools": [],
+            "answer": "O salário da vaga de Python Platform Engineer é de aproximadamente R$ 32.400,00 por mês, usando a cotação fictícia de 1 EUR = R$ 6,00 em 1º de janeiro de 2026.",
+            "recommendations": [],
+            "verification": [
+              {
+                "job_id": "demo-orbit",
+                "claim": "Salário em EUR por month",
+                "status": "confirmada",
+                "evidence": "Salary: EUR 5,400 per month.",
+                "reason": "Moeda e período extraídos do anúncio; a conversão usa a cotação exibida quando disponível.",
+                "nli_label": null,
+                "nli_score": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "converter_moeda",
+                "status": "ok",
+                "detail": "Python Platform Engineer: EUR 5,400.00 por mês ≈ R$ 32,400.00 por mês. Cotação fictícia de 2026-01-01 (1 EUR = R$ 6.00).",
+                "duration_ms": 0,
+                "source": "Cotação fictícia"
+              }
+            ],
+            "memory": {
+              "usadas": [],
+              "guardadas": [],
+              "sessao": [],
+              "evitar": []
+            },
+            "reference": "posição 2 da última lista → Python Platform Engineer · Orbit Works",
+            "sql_rows": null
+          }
+        ]
+      },
+      "error": null,
+      "scores": {
+        "correcao_semantica": {
+          "score": 1,
+          "comment": "No segundo turno, identifica a segunda vaga da lista como Python Platform Engineer, da Orbit Works, e converte EUR 5.400,00 para aproximadamente R$ 32.400,00 por mês, usando a cotação fixa de 1 EUR = R$ 6,00 indicada no cenário."
+        },
+        "trajetoria_modelo": {
+          "score": 1,
+          "comment": "[{\"turn\": 1, \"expected\": [\"buscar_vagas\"], \"actual\": [\"buscar_vagas\"], \"fallback\": []}, {\"turn\": 2, \"expected\": [\"converter_moeda\"], \"actual\": [\"converter_moeda\"], \"fallback\": []}]"
+        },
+        "rotas": {
+          "score": 1,
+          "comment": "['busca', 'cambio'] esperado: ['busca', 'cambio']"
+        }
+      }
+    },
+    {
+      "case": "busca-com-curriculo",
+      "output": {
+        "case": "busca-com-curriculo",
+        "turns": [
+          {
+            "message": "Busque vagas remotas de Python que aceitam Brasil e compare com meu currículo. Qual é a mais aderente?",
+            "route": "busca",
+            "model_tools": [
+              "buscar_vagas",
+              "recuperar_contexto"
+            ],
+            "fallback_tools": [],
+            "answer": "Encontrei duas vagas recomendadas com elegibilidade confirmada para o Brasil.\n\n1. Senior Python Backend Engineer · Aurora Labs.\n2. Python Platform Engineer · Orbit Works.\n\nA mais aderente ao seu currículo é a Senior Python Backend Engineer; vocês têm Python, FastAPI e PostgreSQL em comum.",
+            "recommendations": [
+              {
+                "id": "demo-aurora",
+                "title": "Senior Python Backend Engineer",
+                "company": "Aurora Labs",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/aurora",
+                "status": "recomendado",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. Também atende aos requisitos de inglês. Aderência ao currículo: Python, FastAPI, PostgreSQL.",
+                "evidence": "Worldwide remote, including Brazil. … B2 English required.",
+                "skills": [
+                  "Python",
+                  "FastAPI",
+                  "PostgreSQL"
+                ],
+                "salary": "USD 6,500.00 / mês"
+              },
+              {
+                "id": "demo-orbit",
+                "title": "Python Platform Engineer",
+                "company": "Orbit Works",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/orbit",
+                "status": "recomendado",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. Também atende aos requisitos de inglês. Aderência ao currículo: Python, Docker.",
+                "evidence": "Remote in LATAM, including Brazil. … B2 English required.",
+                "skills": [
+                  "Python",
+                  "Docker"
+                ],
+                "salary": "EUR 5,400.00 / mês"
+              },
+              {
+                "id": "demo-moon",
+                "title": "Python Software Engineer",
+                "company": "Moon Studio",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/moon",
+                "status": "pendente",
+                "reason": "O anúncio não confirma elegibilidade no Brasil.",
+                "evidence": "Remote position.",
+                "skills": [
+                  "Python"
+                ],
+                "salary": null
+              },
+              {
+                "id": "demo-atlas",
+                "title": "Senior Python Developer",
+                "company": "Atlas Systems",
+                "source": "Dados fictícios",
+                "url": "https://example.com/jobs/atlas",
+                "status": "descartado",
+                "reason": "O anúncio exclui candidatos no Brasil.",
+                "evidence": "Remote, US only.",
+                "skills": [
+                  "Python",
+                  "FastAPI",
+                  "PostgreSQL",
+                  "Docker"
+                ],
+                "salary": "USD 9,000.00 / mês"
+              }
+            ],
+            "verification": [
+              {
+                "job_id": "demo-aurora",
+                "claim": "Best match: Brazil is explicitly eligible, and the senior Python, FastAPI, and PostgreSQL requirements align with the résumé; B2 English and UTC-3 hours also match. Sources: job ad; résumé.",
+                "status": "incerta",
+                "evidence": "Worldwide remote, including Brazil.",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. NLI: neutral. Coerência LLM: incerta.",
+                "nli_label": "neutral",
+                "nli_score": 0.99
+              },
+              {
+                "job_id": "demo-orbit",
+                "claim": "Brazil is explicitly eligible; Python and Docker align with the résumé, but the ad does not specify a seniority level or FastAPI/PostgreSQL. Sources: job ad; résumé.",
+                "status": "incerta",
+                "evidence": "Remote in LATAM, including Brazil.",
+                "reason": "O anúncio permite trabalho remoto a partir do Brasil. NLI: neutral. Checagem por LLM sem resultado válido.",
+                "nli_label": "neutral",
+                "nli_score": 0.9
+              },
+              {
+                "job_id": "demo-moon",
+                "claim": "Python aligns with the résumé, but the ad says only “Remote,” so eligibility from Brazil is unclear. Sources: job ad; résumé.",
+                "status": "incerta",
+                "evidence": "Remote position.",
+                "reason": "O anúncio não confirma elegibilidade no Brasil. NLI: entailment. Coerência LLM: incerta.",
+                "nli_label": "entailment",
+                "nli_score": 0.9
+              },
+              {
+                "job_id": "demo-atlas",
+                "claim": "Not eligible from Brazil: the ad specifies “US only.” Source: job ad.",
+                "status": "confirmada",
+                "evidence": "Remote, US only.",
+                "reason": "O anúncio exclui candidatos no Brasil. NLI: neutral. Coerência LLM: suportada.",
+                "nli_label": "neutral",
+                "nli_score": 0.99
+              },
+              {
+                "job_id": "demo-aurora",
+                "claim": "Habilidades cruzadas entre anúncio e currículo",
+                "status": "confirmada",
+                "evidence": "Currículo: Currículo fictício - Alex Silva Senior Backend Engineer / Desenvolvedor backend sênior Skills: Python, FastAPI, PostgreSQL, Docker Inglês: B2 Cargo alvo: Senior Backend Engineer\nAnúncio: Worldwide remote, including Brazil. Senior Python, FastAPI and PostgreSQL. B2 English required. Working hours UTC-3. Salary: USD 6,500 per month.",
+                "reason": "Interseção explícita: Python, FastAPI, PostgreSQL.",
+                "nli_label": null,
+                "nli_score": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "buscar_vagas",
+                "status": "dummy",
+                "detail": "4 vaga(s) correspondem à busca.",
+                "duration_ms": 0,
+                "source": "Remotive"
+              },
+              {
+                "name": "buscar_vagas",
+                "status": "dummy",
+                "detail": "0 vaga(s) correspondem à busca.",
+                "duration_ms": 0,
+                "source": "Arbeitnow"
+              },
+              {
+                "name": "recuperar_contexto",
+                "status": "ok",
+                "detail": "Currículo fictício - Alex Silva Senior Backend Engineer / Desenvolvedor backend sênior Skills: Python, FastAPI, PostgreSQL, Docker Inglês: B2 Cargo alvo: Senior Backend Engineer",
+                "duration_ms": 354,
+                "source": "FAISS documental"
+              }
+            ],
+            "memory": {
+              "usadas": [],
+              "guardadas": [],
+              "sessao": [],
+              "evitar": []
+            },
+            "reference": null,
+            "sql_rows": null
+          }
+        ]
+      },
+      "error": null,
+      "scores": {
+        "correcao_semantica": {
+          "score": 1,
+          "comment": "A resposta indica Aurora como a vaga mais aderente entre as duas com elegibilidade confirmada para o Brasil e sustenta a comparação com Python, FastAPI e PostgreSQL em comum. O registro também mostra a recuperação do currículo fictício e confirma explicitamente essa interseção de habilidades."
+        },
+        "trajetoria_modelo": {
+          "score": 1,
+          "comment": "[{\"turn\": 1, \"expected\": [\"buscar_vagas\", \"recuperar_contexto\"], \"actual\": [\"buscar_vagas\", \"recuperar_contexto\"], \"fallback\": []}]"
+        },
+        "rotas": {
+          "score": 1,
+          "comment": "['busca'] esperado: ['busca']"
+        }
+      }
+    }
+  ]
+}

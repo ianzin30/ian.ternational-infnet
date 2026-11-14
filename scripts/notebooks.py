@@ -237,7 +237,7 @@ def generate():
         do título da Aurora sem alterar o índice, os documentos ou o valor de k."""),
     ], [
         ("4.1", "ferramentas", "Catálogo com descrição e tipo."),
-        ("4.2", "ferramentas", "Registro HTTP interno na célula SQL; HTTP externo no 02."),
+        ("4.2", "ferramentas", "Registro HTTP interno na célula SQL; HTTP externo no notebook 03."),
         ("4.3", "sql", "Pergunta, consulta SQL e linha retornada."),
         ("4.4", "recuperacao", "Executor chama recuperação sobre o índice salvo."),
         ("4.5", "recuperacao", "Antes e depois com os próprios documentos recuperados.")
@@ -245,9 +245,11 @@ def generate():
 
     create("06_integrador_avaliacao", "06 · Integrar, verificar e avaliar", [
         md("""O mesmo `Radar.chat` atende FastAPI, CLI, notebooks e avaliação. O executor
-        recebe todas as ferramentas. O modelo real é configurável; no modo dummy, uma
-        chamada estruturada roteirizada exercita o executor sem credenciais. A resposta
-        passa pelo verificador antes de entrar no histórico."""),
+        usa `create_openai_tools_agent` e `AgentExecutor`. A célula abaixo demonstra a
+        integração com uma decisão roteirizada, sem credenciais. No modo real, o LLM
+        configurado em `OPENAI_MODEL` decide quais ferramentas chamar. O verificador
+        combina regras geográficas, NLI e, no modo real, uma checagem de coerência pelo
+        LLM antes da redação."""),
         code("integracao", """
             from fastapi.testclient import TestClient
             from unittest.mock import patch
@@ -279,19 +281,30 @@ def generate():
             if os.getenv('NOTEBOOK_LANGSMITH') == '1':
                 upload_experiment()
             else:
-                print('LangSmith pendente nesta execução: rode python -m scripts.evaluate --langsmith com as chaves.')
+                print('Regressão local; esta célula não publica um novo experimento no LangSmith.')
         """),
-        md("""A taxa de afirmações confirmadas não é a acurácia: casos de contradição e
-        ausência de fonte devem permanecer no denominador. Analise por caso, especialmente
-        geografia, conversão e uso de memória. O item Streamlit é registrado separadamente
-        porque a interface temporária é HTML, e a CLI também executa o agente."""),
+        md("""## Resultados publicados
+
+        A saída da célula anterior é a regressão local. O aviso histórico nela se refere
+        àquela execução do notebook. Os experimentos foram publicados depois:
+        [demo com 12 casos](../output/langsmith.json) e
+        [modelo real com 6 casos](../output/langsmith-real.json). Os registros trazem os
+        links do LangSmith; o relatório técnico mostra as telas da suíte real.
+
+        Na suíte real, o mesmo `gpt-6-luna` fez o papel de agente e de juiz em chamadas
+        separadas. O código comparou rotas e ferramentas por turno. Os anúncios, a
+        cotação e o currículo eram fixos. A taxa de afirmações confirmadas na demo não
+        é acurácia: inclui situações em que o resultado correto era contradito ou incerto.
+
+        O item 5.5 pede Streamlit. A interface entregue é Vue com FastAPI; a CLI também
+        executa o agente."""),
     ], [
-        ("5.1", "integracao", "NLI e regra geográfica corrigem a afirmação US only."),
+        ("5.1", "integracao", "Verificador registra a contradição do caso Atlas; a suíte real registra o veredito e o rótulo NLI."),
         ("5.2", "integracao", "Busca e RAG no mesmo pedido; câmbio no mesmo Radar."),
-        ("5.3", "integracao", "Executor real com adaptador de modelo roteirizado; OpenAI pendente."),
+        ("5.3", "integracao", "Executor exercitado no modo roteirizado abaixo e com OpenAI na suíte real publicada."),
         ("5.4", "integracao", "Histórico preserva referência à segunda vaga."),
-        ("5.5", "integracao", "UI provisória usa FastAPI; desvio do Streamlit."),
-        ("5.6", "avaliacao", "Regressão local salva; publicação no LangSmith depende de chave.")
+        ("5.5", "integracao", "Streamlit não implementado. Interface Vue com FastAPI e CLI."),
+        ("5.6", "avaliacao", "Regressão local e experimentos publicados no LangSmith, com qualidade e trajetória.")
     ])
 
 
