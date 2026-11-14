@@ -1,0 +1,44 @@
+[
+  {
+    "id": "saudacao",
+    "rubricas": ["2.3", "3.5", "5.3"],
+    "turns": [{"message": "Oi", "route": "ajuda", "tools": []}],
+    "expected": "Responde à saudação e oferece ajuda. Não busca vagas nem afirma ter consultado uma fonte."
+  },
+  {
+    "id": "elegibilidade-brasil",
+    "rubricas": ["2.4", "5.1", "5.3"],
+    "turns": [{"message": "Busque vagas remotas de Python que aceitam candidatos no Brasil.", "route": "busca", "tools": ["buscar_vagas"]}],
+    "expected": "Recomenda Aurora e Orbit. Não recomenda Atlas (US only) nem Moon (região ausente). Um anúncio explicitamente restrito aos EUA deve ser descartado mesmo que a proposta do agente já reconheça a restrição, caso em que não há contradição para corrigir."
+  },
+  {
+    "id": "cambio-com-memoria",
+    "rubricas": ["3.4", "3.6", "4.2", "5.4"],
+    "turns": [
+      {"message": "Busque vagas remotas de Python que aceitam candidatos no Brasil.", "route": "busca", "tools": ["buscar_vagas"]},
+      {"message": "Converta o salário da segunda vaga para reais.", "route": "cambio", "tools": ["converter_moeda"]}
+    ],
+    "expected": "No segundo turno usa a segunda vaga da própria lista, Orbit, e converte 5.400 EUR mensais para 32.400 BRL com a cotação fixa do cenário."
+  },
+  {
+    "id": "busca-com-curriculo",
+    "rubricas": ["4.4", "5.2", "5.3"],
+    "turns": [{"message": "Busque vagas remotas de Python que aceitam Brasil e compare com meu currículo. Qual é a mais aderente?", "route": "busca", "tools": ["buscar_vagas", "recuperar_contexto"]}],
+    "expected": "Busca e recupera evidência do currículo fictício. Indica Aurora como a melhor aderência entre as elegíveis, sustentada por habilidades em comum como Python, FastAPI e PostgreSQL."
+  },
+  {
+    "id": "historico-sql",
+    "rubricas": ["4.3", "5.2", "5.3"],
+    "turns": [{"message": "Quais vagas pagam acima de 5.000 USD por mês e eu ainda não me candidatei?", "route": "candidaturas", "tools": ["consultar_candidaturas"]}],
+    "expected": "A consulta de histórico lista Atlas (Senior Python Developer), mas não Aurora, que já tem candidatura registrada. A pergunta é sobre o histórico, sem filtro de elegibilidade geográfica."
+  },
+  {
+    "id": "preferencia-entre-sessoes",
+    "rubricas": ["3.1", "3.2", "5.4"],
+    "turns": [
+      {"message": "Lembre-se para futuras conversas: prefiro evitar vagas que exigem Docker.", "route": "ajuda", "tools": ["guardar_memoria"]},
+      {"message": "Busque vagas remotas de Python que aceitam Brasil.", "route": "busca", "tools": ["buscar_vagas"], "new_session": true}
+    ],
+    "expected": "Guarda a preferência de evitar Docker e, em uma sessão nova do mesmo usuário, usa essa preferência para não recomendar Orbit. Aurora continua recomendada."
+  }
+]

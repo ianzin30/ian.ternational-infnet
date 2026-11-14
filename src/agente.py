@@ -62,7 +62,8 @@ class CurriculoInvalido(ValueError):
 
 
 class Radar:
-    def __init__(self, *, dummy=True, db_path=DATA / "runtime" / "vagas.db", use_nli=True, index_path=None, llm=None):
+    def __init__(self, *, dummy=True, db_path=DATA / "runtime" / "vagas.db", use_nli=True, index_path=None, llm=None,
+                 use_personal_resume=True):
         self.dummy, self.use_nli = dummy, use_nli
         self.llm = llm if llm is not None else (None if dummy else live_model())
         self.repo = Repository(db_path.resolve())
@@ -74,7 +75,7 @@ class Radar:
         self.sessions = {}
         self.lock = Lock()
         self._fixed_index = index_path
-        self.pessoal = custom_resume() if not dummy else None
+        self.pessoal = custom_resume() if not dummy and use_personal_resume else None
         self.carregar_curriculo(self.pessoal, "pessoal" if self.pessoal else "ficticio", build=False)
         self.chain = RunnableWithMessageHistory(
             RunnableLambda(self._turn), self._history, input_messages_key="message",
@@ -548,13 +549,18 @@ class Radar:
         if decision["ms"] is None:
             decision["ms"] = round((monotonic() - decision["t0"]) * 1000)
         tokens = [e["tokens"] for e in calls.events if e["evento"] == "modelo" and e["tokens"]]
+        ensured_tools = [t.name for t, key in ((selected, {"busca": "jobs", "cambio": "conversion",
+                          "curriculo": "context", "carta": "context", "candidaturas": "rows"}.get(intent)),
+                          (recuperar_contexto if compare_search else None, "context"))
+                         if t is not None and key not in results]
         emit("stage", key="ferramentas", status="ok", source="OpenAI" if self.llm else "modelo roteirizado",
              duration_ms=decision["ms"], detail="", data={
                  "executor": "create_openai_tools_agent + AgentExecutor (max_iterations=4)",
                  "modelo": getattr(self.llm, "model_name", None) or "roteirizado, sem LLM",
                  "disponiveis": [t.name for t in (*{r.name: r for r in routes.values()}.values(), guardar_memoria)],
                  "chamadas": [e for e in calls.events if e["evento"] in {"action", "observation", "erro"}],
-                 "tokens": tokens, "prompt": AGENT_SYSTEM, "callbacks": len(calls.events)})
+                 "tokens": tokens, "prompt": AGENT_SYSTEM, "callbacks": len(calls.events),
+                 "fallback": ensured_tools})
         if selected:
             # Tool calls are idempotent within a turn. Fill the required result if the model skipped it.
             selected.invoke({})

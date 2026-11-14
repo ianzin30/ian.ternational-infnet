@@ -87,7 +87,10 @@ Configure `LANGSMITH_API_KEY` e as credenciais do modelo usado como juiz. Depois
 
 - [Roadmap e matriz dos 29 critérios](docs/progresso.md)
 - [Relatório técnico](output/pdf/ian_trinta_ai-agents_langchain-agents.pdf)
-- [Roteiro para gravar a defesa](docs/gravacao.md)
+- [Vídeo da defesa](https://youtu.be/I91282WyBMc)
+- [Roteiro usado na gravação](docs/gravacao.md)
+- [Avaliação no LangSmith, link público](https://smith.langchain.com/public/b64697c5-7b1f-4b57-8614-0e56daf802d9/d): dataset `radar-modelo-real-c9033593` com os 6 casos e o experimento do modelo real
+- [Resultados dessa avaliação em arquivo](output/langsmith-real.json): 6 casos, gerada por `.venv/bin/python -m scripts.evaluate_real` (exige as chaves da OpenAI e do LangSmith)
 - [Resultados dos 12 cenários locais](output/avaliacao-local.json)
 
 Os anúncios de demonstração e o currículo são fictícios. O protótipo usa um perfil por instância e mantém a memória conversacional no processo. O servidor deve rodar localmente durante a apresentação. O projeto usou OpenAI Codex na implementação do agente, Claude Design no protótipo da interface e Claude Code na interface em Vue e nas rotas que a servem; a avaliação local e os resultados HTTP foram executados e verificados.

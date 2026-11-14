@@ -1,11 +1,25 @@
-# Roteiro para gravar a defesa
+# Roteiro da defesa em vídeo
 
-O enunciado prevê a CLI para a defesa. Abra um terminal com a CLI e mantenha a webcam ligada. Prepare primeiro o FAISS e os pesos com `.venv/bin/python -m scripts.setup_assets`.
+Vídeo gravado: <https://youtu.be/I91282WyBMc>
 
-1. No modo demo, pergunte por vagas remotas de Python. Mostre as recomendações e o caso Atlas: a proposta dizia que aceita Brasil, o anúncio diz `Remote, US only.`, e a vaga foi descartada antes da resposta.
-2. Na mesma sessão, filtre para vagas que aceitam Brasil e peça a conversão da segunda. Explique como o ID da vaga exibida permite resolver a referência sem refazer a lista. Mostre moeda, período e cotação fictícia.
-3. Pergunte qual vaga combina mais com o currículo. Mostre a recuperação via FAISS e as habilidades em comum que fundamentaram a escolha.
-4. Em outra janela, execute `.venv/bin/python -m scripts.live_smoke --openai` com a chave configurada. Mostre os estados e as fontes HTTP da chamada. Se também for demonstrar o chat com dados reais, execute `MODO_DUMMY=false .venv/bin/python -m scripts.cli`. Se faltar a chave OpenAI, `scripts.live_smoke` comprova as chamadas HTTP usando decisões roteirizadas; identifique essa diferença ao narrar.
-5. Mostre a matriz de evidências e a avaliação. Quando o experimento LangSmith estiver disponível, abra as métricas e um caso de contradição. Assista à gravação antes de enviar o link pelo canal de entrega do curso.
+A defesa usa a interface web (`.venv/bin/uvicorn src.api:app`, depois [localhost:8000](http://127.0.0.1:8000)) em modo real, com a webcam ligada. A interface usa o mesmo executor e a mesma memória da CLI. Antes de gravar, rode `.venv/bin/python -m scripts.setup_assets` e faça um turno de aquecimento para os pesos já estarem carregados.
 
-Nenhum vídeo ou envio externo foi criado por este projeto. A defesa exige a participação do autor.
+## 1. Visão geral do fluxo
+
+Apresente o caminho de uma pergunta: memória, roteador de intenção, agente com cinco ferramentas, regras fixas de elegibilidade, verificação por NLI e resposta em stream. Destaque o que é decisão do modelo e o que é código fixo.
+
+## 2. Interface em modo real
+
+1. "Mostre vagas remotas de Python que aceitam Brasil". Acompanhe a linha do tempo: intenção, escolha de ferramentas e as chamadas reais à Remotive e à Arbeitnow. Abra o "Por quê?" de uma vaga para mostrar o trecho do anúncio.
+2. "Converta o salário da primeira". Mostre a cotação da AwesomeAPI e explique que a posição foi resolvida pela lista do turno anterior (memória entre turnos).
+3. "Lembre que prefiro evitar vagas que pedem Docker". Mostre a linha "Guardei" e a aba "Longo prazo" do painel de memória.
+4. Repita a busca e mostre a preferência aplicada.
+5. Opcional: "Qual combina mais com meu currículo?" (RAG) e "Quais vagas eu ainda não apliquei?" (text-to-SQL).
+
+Os três requisitos do enunciado ficam cobertos pelos passos 1 e 2: raciocínio com decisão de ferramenta, chamada real de API externa e memória entre turnos.
+
+## 3. LangSmith
+
+Abra "Ver no LangSmith" em uma resposta para mostrar o trace do turno. Depois abra o [experimento com os seis casos do modelo real](https://smith.langchain.com/public/b64697c5-7b1f-4b57-8614-0e56daf802d9/d) (resultados também em `output/langsmith-real.json`) e compare, em um caso, a rota e as ferramentas esperadas com as executadas.
+
+A [correspondência entre a interface e a rubrica](ui-rubrica.md) lista onde cada item aparece.
