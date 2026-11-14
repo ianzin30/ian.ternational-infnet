@@ -1,96 +1,147 @@
-# ian.ternational
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/img/wordmark-dark.svg">
+    <img src="docs/readme/img/wordmark-light.svg" alt="ian.ternational" width="420">
+  </picture>
+</p>
 
-> Nome do agente na interface. O código e os notebooks ainda usam o nome de trabalho, Radar Remoto.
+<p align="center">
+  A remote-job agent for people who live in Brazil.<br>
+  <b>English</b> · <a href="README.pt-BR.md">Português (BR)</a>
+</p>
 
-**Encontre vagas remotas internacionais e confira a evidência por trás de cada recomendação.**
+---
 
-```bash
-uv venv --python 3.12
-uv pip sync requirements.txt
-.venv/bin/python -m scripts.setup_assets
-.venv/bin/python -m scripts.cli
-```
+At least once in their career, every dev has dreamed of working abroad: other countries, other time zones, other cultures. Then you open a job board and reality kicks in. Half the "remote" jobs turn out to be "remote, US only" somewhere in the fine print. The salary is in dollars or euros and you do the math in your head. And you still have to guess whether your résumé is even close.
 
-Digite `Mostre vagas remotas de Python`, depois `Só as que aceitam Brasil` e `Converta o salário da segunda`. A CLI mostra as ferramentas usadas e os trechos que sustentam a decisão. Para usar a interface, execute `.venv/bin/uvicorn src.api:app` e abra [localhost:8000](http://127.0.0.1:8000). Ela mostra, a cada turno, as etapas do agente, a fonte de cada dado e o item da rubrica que a etapa cobre: veja o [mapa da rubrica na interface](docs/ui-rubrica.md).
+So I built an agent that does that reading for me. And because my name is Ian, it became **ian.ternational**.
 
-## Executar sem chave
+You ask in plain language. It searches two job boards, drops what doesn't accept candidates in Brazil, converts the salary to reais, compares the job with your résumé, and checks each thing it's about to tell you against the job ad before it says it.
 
-O modo padrão usa currículo, vagas e taxas fictícias. O modelo de ferramentas é roteirizado, mas FastAPI, AgentExecutor, SQLite, Docling, FAISS e NLI são os mesmos componentes usados no fluxo de execução. O primeiro preparo baixa pesos públicos do Docling, do modelo multilíngue e do NLI; depois, use `HF_HUB_OFFLINE=1` se quiser rodar com os pesos em cache. O índice documental é salvo em `data/runtime/faiss_index/`; carregue apenas um índice produzido localmente pelo projeto.
+<p align="center">
+  <img src="docs/readme/gif/busca.gif" alt="Typing a question, the agent's steps lighting up on the right, and the job cards arriving" width="100%">
+</p>
+<p align="center"><sub>
+  The question on screen: <i>"Show me remote Python jobs that accept Brazil."</i> The interface is in Portuguese because that's who it's for. The jobs in these recordings are made-up samples.
+</sub></p>
 
-| Comando | Resultado |
+<p align="center">
+  <a href="https://youtu.be/I91282WyBMc"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/img/card-video-en-dark.svg"><img src="docs/readme/img/card-video-en-light.svg" alt="Watch the demo on YouTube" width="270"></picture></a>
+  <a href="https://claude.ai/artifact/HwoGkNo6gDsFqVJn4GHFMk"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/img/card-flow-en-dark.svg"><img src="docs/readme/img/card-flow-en-light.svg" alt="Explore the interactive flow" width="270"></picture></a>
+  <a href="output/pdf/ian_trinta_ai-agents_langchain-agents.pdf"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/img/card-report-en-dark.svg"><img src="docs/readme/img/card-report-en-light.svg" alt="Read the technical report" width="270"></picture></a>
+</p>
+
+## What you can ask it
+
+### "Does this job actually accept Brazil?"
+
+The agent's first draft said a job was open to Brazil. The ad said "Remote, US only." Before answering, the agent compares every claim with the text of the ad, and when they disagree, the ad wins: the job leaves the list and you can open the receipt.
+
+<p align="center"><img src="docs/readme/gif/verificacao.gif" alt="Opening the correction: the agent's claim, what the ad says, and the job being discarded" width="820"></p>
+
+### "Convert the salary of the second one"
+
+It knows which one "the second one" is, reads the salary from the ad, gets the exchange rate, and shows the amount in reais with the rate and date it used.
+
+<p align="center"><img src="docs/readme/gif/cambio.gif" alt="Asking to convert the second job's salary and getting the value in reais" width="820"></p>
+
+### "Which ones haven't I applied to yet?"
+
+Click **Já apliquei** ("I've applied") on a job and it's marked as applied. Later you can just ask what's left. The agent only keeps track of what you did. It never sends an application for you.
+
+<p align="center"><img src="docs/readme/gif/candidatura.gif" alt="Marking a job as applied, then asking which jobs are still pending" width="820"></p>
+
+### "Remember that I'd rather avoid Docker"
+
+Tell it a preference once. In a brand-new conversation, the job that asks for Docker is already out, with the reason written next to it.
+
+<p align="center"><img src="docs/readme/gif/memoria.gif" alt="Saving a preference, starting a new conversation, and seeing a job discarded because of it" width="820"></p>
+
+## How it thinks
+
+Every question takes a path. Some steps are the AI deciding, some are plain fixed code (rules don't need creativity), and some are data coming from outside. This is the path of a job search:
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/flow/search-en-dark.svg">
+    <img src="docs/readme/flow/search-en-light.svg" alt="The path of a job search through the agent" width="760">
+  </picture>
+</p>
+
+Other questions take other paths:
+
+<details>
+<summary>Convert a salary</summary>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/flow/salary-en-dark.svg"><img src="docs/readme/flow/salary-en-light.svg" alt="The path of a salary conversion" width="760"></picture></p>
+</details>
+
+<details>
+<summary>Compare with my résumé</summary>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/flow/resume-en-dark.svg"><img src="docs/readme/flow/resume-en-light.svg" alt="The path of a résumé comparison" width="760"></picture></p>
+</details>
+
+<details>
+<summary>What haven't I applied to?</summary>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/flow/history-en-dark.svg"><img src="docs/readme/flow/history-en-light.svg" alt="The path of a question about application history" width="760"></picture></p>
+</details>
+
+<details>
+<summary>Remember a preference</summary>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/readme/flow/memory-en-dark.svg"><img src="docs/readme/flow/memory-en-light.svg" alt="The path of saving a preference" width="760"></picture></p>
+</details>
+
+Want to click through each step and see what happens inside it? The [interactive version](https://claude.ai/artifact/HwoGkNo6gDsFqVJn4GHFMk) has every step explained (in Portuguese).
+
+## It checks itself
+
+An agent that sounds confident and is wrong is worse than no agent. Two things keep this one honest:
+
+- **Before answering**, every claim is compared with the job ad by a small model that runs on your own machine. A contradiction removes the job from the list.
+- **After building it**, I ran it against test cases with known right answers: 12 out of 12 on the scripted scenarios, and 6 out of 6 with the real model, where it had to pick the right route and the right tools. The [evaluation is public on LangSmith](https://smith.langchain.com/public/b64697c5-7b1f-4b57-8614-0e56daf802d9/d).
+
+The interface doesn't hide any of it. Every answer comes with the steps the agent took, where each piece of data came from, and how long it took.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/readme/img/app-dark.png">
+    <img src="docs/readme/img/app-light.png" alt="The full interface: the answer on the left, the agent's steps on the right" width="100%">
+  </picture>
+</p>
+
+## Under the hood
+
+| Piece | What it does |
 |---|---|
-| `.venv/bin/python -m scripts.setup_assets` | Prepara currículo, FAISS e pesos do NLI. |
-| `.venv/bin/python -m scripts.cli` | Abre a CLI com evidências por turno. Use `/sair` para encerrar. |
-| `.venv/bin/uvicorn src.api:app` | Serve a interface (Vue, já compilada em `web/dist`), a API e `/docs`. |
-| `npm --prefix web install && npm --prefix web run build` | Recompila a interface depois de editar `web/src`. Só é preciso Node para isso. |
-| `.venv/bin/python -m scripts.evaluate` | Roda os 12 cenários e salva `output/avaliacao-local.json`. |
-| `.venv/bin/python -m pytest -q` | Testa os cenários, contrato HTTP, isolamento SQL e regras de evidência. |
+| **LangChain** | The agent itself: one agent, five tools, short and long-term memory |
+| **OpenAI** | The model that understands the request and writes the answer |
+| **Remotive, Arbeitnow, AwesomeAPI** | Where the jobs and the exchange rates come from |
+| **FAISS + SQLite** | Finding the right parts of the résumé, and remembering jobs, applications and preferences |
+| **A local NLI model** | The fact-check, running on CPU with no API call |
+| **FastAPI + Vue 3** | The server and the interface, with answers streaming in as they're written |
+| **LangSmith** | Tracing every step and running the evaluation |
 
-A rota `POST /candidaturas` registra uma ação que o candidato já tomou. Depois de buscar, envie `session_id`, `vaga_id` e `status` (`salva`, `enviada` ou `descartada`) pela página `/docs`. A operação atualiza apenas o SQLite local; não envia formulários a empregadores.
+The full story, with every design decision, is in the [technical report](output/pdf/ian_trinta_ai-agents_langchain-agents.pdf) (PDF, in Portuguese).
 
-## Interface e API
+## Run it yourself
 
-A interface é uma aplicação Vue 3 em `web/src`, transplantada do protótipo do Claude Design ([handoff](web/HANDOFF.md)). O FastAPI serve o build de `web/dist`, então não é preciso Node para rodar.
-
-| Rota | Uso |
-|---|---|
-| `POST /chat/stream` | Turno em Server-Sent Events: `stage` (cada etapa, com fonte, duração e dados), `token` (resposta), `memory` e `final`. |
-| `POST /chat` | O mesmo turno, sem streaming. |
-| `POST /react` | Roda o pedido no ReAct clássico (`initialize_agent`) e devolve Thought, Action e Observation. |
-| `GET /memoria`, `DELETE /memoria/{id}` | Memória de longo prazo do usuário (SQLite + FAISS, k=3) e a memória da conversa. |
-| `GET`/`POST /curriculo`, `/curriculo/info`, `/curriculo/reset` | PDF ativo, troca com etapas em SSE e restauração. |
-| `GET /modelos`, `POST /modelo` | Alterna entre o modelo real e o demo roteirizado. |
-| `GET /avaliacao` | Métricas do último experimento publicado no LangSmith. |
-
-No modo real, o modelo decide o que guardar na memória pela ferramenta `guardar_memoria`; no modo demo, regras locais fazem esse papel e a interface mostra a origem. Em macOS, `torch` e `faiss-cpu` carregam cada um a sua cópia do OpenMP; `src/config.py` define `KMP_DUPLICATE_LIB_OK=TRUE` para o processo não abortar quando os dois são usados no mesmo turno.
-
-## Verificar APIs reais e OpenAI
+No API key needed. By default it runs in demo mode, with sample jobs and a sample résumé.
 
 ```bash
-.venv/bin/python -m scripts.live_smoke
+uv venv --python 3.12 && uv pip sync requirements.txt
 ```
-
-O teste acima usa chamadas estruturadas roteirizadas e executa HTTP real contra Remotive, Arbeitnow e AwesomeAPI. Consulte [o registro capturado](output/chamadas-http.json). Uma fonte pode responder normalmente sem retornar uma vaga para a busca.
-
-Para validar o modelo também, copie `.env.example` para `.env`, defina `MODO_DUMMY=false` e preencha `OPENAI_API_KEY`. O modelo padrão é `gpt-6-luna` (`OPENAI_MODEL`). No modo real, os embeddings do RAG e da memória usam `text-embedding-3-small` (`OPENAI_EMBEDDING_MODEL`). O modo dummy continua com o MiniLM local e sem chave. Os vetores têm tamanhos diferentes, então cada modo tem seu índice: `data/runtime/faiss_index/` e `data/runtime/faiss_index_openai/`. O NLI de verificação continua local nos dois modos.
 
 ```bash
 .venv/bin/python -m scripts.setup_assets
-.venv/bin/python -m scripts.live_smoke --openai
-.venv/bin/python -m scripts.cli
 ```
-
-O `setup_assets` constrói o índice OpenAI quando `MODO_DUMMY=false` e a chave estão configurados. Para acompanhar o gasto, use a página Usage do painel da OpenAI, que é a fonte oficial e inclui os embeddings. Com `LANGSMITH_TRACING=true` e `LANGSMITH_API_KEY`, cada turno também aparece no projeto `LANGSMITH_PROJECT` do LangSmith, com os tokens e o custo estimado de cada chamada ao modelo.
-
-Para usar outro currículo no modo real, defina `CURRICULO_PDF` com o caminho do PDF local e rode `scripts.setup_assets` novamente. No modo real, o texto extraído é enviado ao modelo configurado para extrair o perfil; use um currículo fictício ou autorizado na defesa.
-
-Se a AwesomeAPI exigir autenticação, configure `AWESOMEAPI_KEY`. Para a interface em outra origem durante o desenvolvimento, configure `CORS_ORIGIN`; o HTML servido pelo FastAPI usa a mesma origem e dispensa CORS.
-
-## Reproduzir os notebooks
-
-Comece pelo [00 · Visão geral](notebooks/00_visao_geral.ipynb), com o mapa do código e dois diagramas. A leitura não exige executar células. Depois, siga para [01 · Indexação](notebooks/01_indexacao.ipynb), [02 · Chain](notebooks/02_chain_mvp.ipynb), [03 · ReAct](notebooks/03_agente_react.ipynb), [04 · Memória](notebooks/04_memoria.ipynb), [05 · Ferramentas e RAG](notebooks/05_ferramentas_rag.ipynb) e [06 · Integração e avaliação](notebooks/06_integrador_avaliacao.ipynb). Cada notebook de prática termina com as referências da rubrica. Os [diagramas editáveis](docs/diagramas/) ficam em formato Excalidraw.
 
 ```bash
-.venv/bin/python -m ipykernel install --prefix .venv --name python3
-for notebook in notebooks/0[1-6]_*.ipynb; do
-  .venv/bin/jupyter nbconvert --to notebook --execute --inplace "$notebook" || break
-done
+.venv/bin/uvicorn src.api:app
 ```
 
-Para reproduzir as chamadas HTTP reais do notebook 03, execute-o com `NOTEBOOK_LIVE_APIS=1`. Para usar o LLM real nos trechos opcionais de perfil, ReAct, function calling e text-to-SQL, configure as chaves e use `NOTEBOOK_OPENAI=1`.
+Then open [localhost:8000](http://127.0.0.1:8000). To use real jobs and the real model, and for everything else (CLI, notebooks, tests, evaluation), see the [setup guide](docs/SETUP.md) (in Portuguese).
 
-## Avaliar no LangSmith
+---
 
-Configure `LANGSMITH_API_KEY` e as credenciais do modelo usado como juiz. Depois execute `.venv/bin/python -m scripts.evaluate --langsmith`. O script registra os 12 cenários fictícios, a correção semântica, a trajetória e a proporção de afirmações confirmadas. Use `--share` para gerar também o link público do dataset fictício. Verifique em uma janela anônima o link que será enviado ao professor. O script também grava `output/langsmith.json`, que a interface lê no bloco "Avaliação no LangSmith". Último experimento (13/11/2026): correção semântica 12/12, regressão 12/12, trajetória 12/12 e 75% das afirmações confirmadas.
-
-## Revisar evidências e gravar
-
-- [Roadmap e matriz dos 29 critérios](docs/progresso.md)
-- [Relatório técnico](output/pdf/ian_trinta_ai-agents_langchain-agents.pdf)
-- [Vídeo da defesa](https://youtu.be/I91282WyBMc)
-- [Roteiro usado na gravação](docs/gravacao.md)
-- [Avaliação no LangSmith, link público](https://smith.langchain.com/public/b64697c5-7b1f-4b57-8614-0e56daf802d9/d): dataset `radar-modelo-real-c9033593` com os 6 casos e o experimento do modelo real
-- [Resultados dessa avaliação em arquivo](output/langsmith-real.json): 6 casos, gerada por `.venv/bin/python -m scripts.evaluate_real` (exige as chaves da OpenAI e do LangSmith)
-- [Resultados dos 12 cenários locais](output/avaliacao-local.json)
-
-Os anúncios de demonstração e o currículo são fictícios. O protótipo usa um perfil por instância e mantém a memória conversacional no processo. O servidor deve rodar localmente durante a apresentação. O projeto usou OpenAI Codex na implementação do agente, Claude Design no protótipo da interface e Claude Code na interface em Vue e nas rotas que a servem; a avaliação local e os resultados HTTP foram executados e verificados.
+<sub>
+Built as a college project at Infnet. The sample jobs and the résumé in the demo are fictional. In the code you'll still find the project's working name, "Radar Remoto". I used OpenAI Codex to implement the agent, Claude Design to prototype the interface, and Claude Code for the Vue interface and the routes that serve it. The GIFs and diagrams on this page are generated by the scripts in <a href="scripts/readme">scripts/readme</a>.
+</sub>
